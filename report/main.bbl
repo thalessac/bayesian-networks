@@ -1,0 +1,34 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Hosmer and Lemeshow(2000)]{hosmer-lemeshow2000}
+David~W. Hosmer and Stanley Lemeshow.
+\newblock \emph{Applied Logistic Regression}.
+\newblock John Wiley \& Sons, New York, 2 edition, 2000.
+
+\bibitem[Shakhnarovich et~al.(2001)Shakhnarovich, El-Yaniv, and
+  Baram]{shakhnarovich2001icml}
+Gregory Shakhnarovich, Ran El-Yaniv, and Yoram Baram.
+\newblock Smoothed bootstrap and statistical data cloning for classifier
+  evaluation.
+\newblock In \emph{Proceedings of the 18th International Conference on Machine
+  Learning ({ICML})}, pages 521--528. Morgan Kaufmann, 2001.
+
+\bibitem[Uncu and T{\"u}rksen(2007)]{uncu2007}
+Ozgur Uncu and I.~Burhan T{\"u}rksen.
+\newblock A novel feature selection approach: Combining feature wrappers and
+  filters.
+\newblock \emph{Information Sciences}, 177:\penalty0 449--466, 2007.
+
+\bibitem[Wold(1975)]{wold75}
+Herman Wold.
+\newblock Soft modelling by latent variables: The non-linear iterative partial
+  least squares ({NIPALS}) approach.
+\newblock In Joseph Gani, editor, \emph{Perspectives in Probability and
+  Statistics}, pages 117--142. Academic Press, 1975.
+
+\end{thebibliography}
