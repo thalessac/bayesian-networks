@@ -5,11 +5,11 @@
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
-\bibitem[Colombo and Maathuis(2014)]{colombo2014order}
-Diego Colombo and Marloes~H. Maathuis.
-\newblock Order-independent constraint-based causal structure learning.
-\newblock \emph{Journal of Machine Learning Research}, 15:\penalty0 3921--3962,
-  2014.
+\bibitem[Averin et~al.(2026)Averin, Moysiadis, and Katakis]{Averin2026Survey}
+Pavel Averin, Theodoros Moysiadis, and Ioannis Katakis.
+\newblock Conditional independence tests for constraint-based causal discovery:
+  A survey.
+\newblock \emph{arXiv preprint arXiv:2608.11156}, 2026.
 
 \bibitem[Kalisch and B{"u}hlmann(2007)]{kalisch2007estimating}
 Markus Kalisch and Peter B{"u}hlmann.
