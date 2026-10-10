@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.20)  10 OCT 2026 22:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.20)  10 OCT 2026 22:43
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -190,22 +190,22 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 32.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (Sections/Introducción.tex [1
 
-{C:/Users/thale/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]) (Sections/Estado del arte.tex) (Sections/Conclusiones y líneas futuras.tex) (main.bbl [2]) [3] (main.aux)
+{C:/Users/thale/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]) (Sections/Estado del arte.tex) (Sections/Conclusiones y líneas futuras.tex [2]) (main.bbl) [3] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 3567 strings out of 467870
- 52623 string characters out of 5418355
- 467268 words of memory out of 5000000
- 32414 multiletter control sequences out of 15000+600000
- 635472 words of font info for 69 fonts, out of 8000000 for 9000
+ 3555 strings out of 467870
+ 52372 string characters out of 5418355
+ 467096 words of memory out of 5000000
+ 32402 multiletter control sequences out of 15000+600000
+ 635779 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,7n,84p,921b,249s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,7n,84p,1316b,246s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/thale/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/thale/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/thale/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/thale/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/thale/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/thale/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/thale/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on main.pdf (3 pages, 109808 bytes).
+Output written on main.pdf (3 pages, 113057 bytes).
 PDF statistics:
  47 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

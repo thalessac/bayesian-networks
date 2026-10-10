@@ -1,9 +1,15 @@
 \section{Estado del arte}
 
-Describir lo que han hecho otros, citando sus trabajos.
+El panorama actual del descubrimiento de estructuras en redes bayesianas y modelos gráficos causales ha experimentado una notable evolución, transitando desde la formulación clásica de algoritmos basados en restricciones hacia métodos altamente escalables, flexibles e híbridos. Para comprender de manera sistemática este estado del arte, la presente sección se organiza en tres ejes analíticos interconectados. En primer lugar, se examina la evolución del algoritmo PC y sus variantes, abordando desde sus fundamentos teóricos y modificaciones para garantizar la independencia del orden de entrada y la paralelización, hasta sus extensiones modernas para datos temporales, valores extremos y optimización diferenciable. En segundo lugar, se analizan las pruebas de hipótesis de independencia condicional, comprendidas como el motor estadístico crítico que sustenta las decisiones de poda de aristas y orientación en presencia de variados tipos de datos. Por último, se exploran los paradigmas híbridos, los cuales integran el filtrado local por restricciones con la optimización por puntuación o la resolución lógica de conflictos para mitigar la acumulación de errores en muestras finitas y mejorar la precisión estructural.
 
-Hay diferentes formatos dependiendo del tipo de trabajo:
-un artículo como \cite{uncu2007},
-un libro como \cite{hosmer-lemeshow2000},
-un capítulo de libro como \cite{wold75}
-o unas actas de congreso \cite{shakhnarovich2001icml}.
+\subsection{Evolución del Algoritmo PC: Fundamentos, Inestabilidad y Variantes Algorítmicas}
+
+El algoritmo PC...
+
+\subsection{Pruebas de Independencia Condicional y Extensiones para Causalidad}
+
+La base del aprendizaje estructural de tipo \emph{constraint-based} reside en las pruebas de independencia condicional, que permiten decidir si dos variables son dependientes o independientes dadas otras variables del sistema...
+
+\subsection{Enfoques Híbridos (Constraint-Based y Score-and-Search) y Líneas Futuras}
+
+La literatura reciente ha mostrado un creciente interés en enfoques híbridos que combinan la fuerza de los métodos\emph{constraint-based} con las estrategias de\emph{score-and-search}. ...
