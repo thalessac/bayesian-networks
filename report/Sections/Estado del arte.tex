@@ -10,7 +10,6 @@ En el algoritmo PC, asumimos un conjunto de variables $\mathbf{X} = (X_1, \ldots
 
 La idea central del método consiste en recuperar primero el esqueleto del grafo y, posteriormente, orientar las aristas que permanecen. La etapa de poda se realiza eliminando enlaces entre parejas de nodos cuando existe un subconjunto de sus vecinos que hace que ambas variables sean condicionalmente independientes dados esos vecinos. Este criterio permite reducir progresivamente el grafo completo inicial hasta un grafo no dirigido compatible con las independencias observadas. \citep{abellan2006variations}
 
-\paragraph{Fase 1: búsqueda del esqueleto}
 
 \begin{algorithm}[H]
 \caption{Algoritmo PC: fase de búsqueda del esqueleto}
@@ -29,20 +28,13 @@ La idea central del método consiste en recuperar primero el esqueleto del grafo
 \end{algorithmic}
 \end{algorithm}
 
-\paragraph{Explicación de variables y notaciones}
+En que el conjunto completo de variables del problema se denota por $\mathbf{X}$, mientras que $\mathrm{Adj}_{G'}(X)$ representa el conjunto de vecinos de $X$ en el grafo actual $G'$. La expresión $I(X,Y \mid S)$ indica que $X$ e $Y$ son condicionalmente independientes dado el conjunto $S$. Así, si las independencias observadas son fieles a un DAG, no existe un enlace entre $X$ e $Y$ si y solo si existe un subconjunto $S$ de los vecinos de $X$ tal que se cumple $I(X,Y \mid S)$. Para cada par de variables, $S_{XY}$ contendrá dicho conjunto, si se encuentra. Este conjunto se utilizará en la etapa posterior de orientación.\citep{abellan2006variations}
 
-\begin{itemize}
-    \item $\mathbf{X}$ denota el conjunto completo de variables del problema.
-    \item $\mathrm{Adj}_{G'}(X)$ representa el conjunto de vecinos de $X$ en el grafo actual $G'$.
-    \item $I(X,Y \mid S)$ indica independencia condicional entre $X$ e $Y$ dado el conjunto $S$.
-    \item El principio fundamental es que, si las independencias observadas son fieles a un DAG, entonces no existe un enlace entre $X$ e $Y$ si y solo si existe un subconjunto $S$ de los vecinos de $X$ tal que $I(X,Y \mid S)$.
-\end{itemize}
+La etapa de orientación procederá buscando conjuntos de tres variables $\{X, Y, Z\}$ tales que los enlaces $X - Z$ y $Y - Z$ estén en el grafo pero no el enlace $X - Y$. Entonces, si $Z \notin S_{XY}$, orienta los enlaces de $X$ a $Z$ y de $Y$ a $Z$ creando una estructura en v: $X \rightarrow Z \leftarrow Y$. Una vez realizadas estas orientaciones, se intenta orientar el resto de las aristas siguiendo dos principios básicos: no crear ciclos y no crear nuevas estructuras en v. Es posible que la orientación de algunas aristas deba elegirse arbitrariamente. Si el conjunto de independencias es fiel a un grafo y disponemos de un procedimiento perfecto para determinar si $I(X, Y \mid S)$, entonces el algoritmo garantiza producir un grafo equivalente (que representa el mismo conjunto de independencias) al original. \citep{abellan2006variations}
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.7\textwidth]{Figures/PC algorithm - Abellan some variations on the PC algorithm.PNG}
-    \caption{Variaciones del algoritmo PC en la literatura reciente.}
-\end{figure}
+Abellán, Gómez-Olmedo y Moral (2006) propusieron cuatro modificaciones clave al algoritmo PC estándar para abordar las limitaciones causadas por errores estadísticos en contextos de muestras finitas. Para minimizar los errores de decisión asociados a conjuntos de condicionamiento grandes, introdujeron la evaluación de la independencia condicional mediante conjuntos de corte de tamaño mínimo ($CUT_{X,Y}$), calculados con un algoritmo de Ford-Fulkerson modificado. Además, sustituyeron las pruebas clásicas de $\chi^2$ por una métrica de puntuación bayesiana de Dirichlet (BD), que ofrece un equilibrio más razonable entre los errores de tipo I y tipo II en distintos tamaños de muestra. Asimismo, incorporaron un paso de refinamiento greedy posterior para optimizar el grafo aprendido según una puntuación BD con el fin de aproximar mejor la distribución conjunta de probabilidad, y un método de resolución de triángulos que evalúa la fuerza de los enlaces para podar el arco más débil en subgrafos totalmente conectados de tres variables.
+
+Kalisch y Bühlmann (2007) establecieron la validez teórica de aplicar el algoritmo PC en escenarios de alta dimensión, donde el número de variables $p$ crece rápidamente en función del tamaño muestral $n$ ($p = O(n^a)$ con $0 < a < \infty$). Demostraron que la versión muestral del algoritmo PC, utilizando la transformación $z$ de Fisher para pruebas de correlación parcial, es asintóticamente consistente para estimar el esqueleto de DAG dispersos bajo distribuciones gaussianas multivariantes. Bajo la suposición de que los vecindarios del grafo son dispersos ($q_n = O(n^{1-b})$ con $0 < b \le 1$), mostraron que la complejidad computacional en el peor caso queda acotada por $O(p^{q_n})$, lo que hace que el aprendizaje de estructuras sea computacionalmente tratable en redes altas y dispersas. Por último, sus simulaciones empíricas demostraron que el algoritmo PC alcanza tasas de descubrimiento verdaderas (TDR) significativamente mayores que las alternativas basadas en puntuación y mantiene una gran robustez en un amplio rango de niveles de significación $\alpha$.
 
 \subsection{Pruebas de Independencia Condicional y Extensiones para Causalidad}
 
