@@ -1,10 +1,48 @@
-\section{Estado del arte}
+﻿\section{Estado del arte}
 
 El panorama actual del descubrimiento de estructuras en redes bayesianas y modelos gráficos causales ha experimentado una notable evolución, transitando desde la formulación clásica de algoritmos basados en restricciones hacia métodos altamente escalables, flexibles e híbridos. Para comprender de manera sistemática este estado del arte, la presente sección se organiza en tres ejes analíticos interconectados. En primer lugar, se examina la evolución del algoritmo PC y sus variantes, abordando desde sus fundamentos teóricos y modificaciones para garantizar la independencia del orden de entrada y la paralelización, hasta sus extensiones modernas para datos temporales, valores extremos y optimización diferenciable. En segundo lugar, se analizan las pruebas de hipótesis de independencia condicional, comprendidas como el motor estadístico crítico que sustenta las decisiones de poda de aristas y orientación en presencia de variados tipos de datos. Por último, se exploran los paradigmas híbridos, los cuales integran el filtrado local por restricciones con la optimización por puntuación o la resolución lógica de conflictos para mitigar la acumulación de errores en muestras finitas y mejorar la precisión estructural.
 
 \subsection{Evolución del Algoritmo PC: Fundamentos, Inestabilidad y Variantes Algorítmicas}
 
-El algoritmo PC...
+El \textbf{algoritmo PC} (denominado así por sus creadores Peter Spirtes y Clark Glymour) constituye el método clásico y fundacional dentro del paradigma de aprendizaje de estructuras causales basado en restricciones. Desarrollado como una alternativa computacionalmente eficiente al algoritmo SGS (\textit{Spirtes, Glymour y Scheines}), el algoritmo PC parte de un grafo completo no dirigido y elimina aristas de forma recursiva basándose en decisiones de independencia condicional. Esto produce un grafo no dirigido que luego puede ser parcialmente orientado y extendido para representar el DAG subyacente. El algoritmo PC se ejecuta en el peor de los casos en tiempo exponencial (en función del número de nodos), pero si el DAG subyacente real es disperso, esta complejidad se reduce a un tiempo de ejecución polinomial. \citep{spirtes2000causation, scanagatta2019survey}
+
+En el algoritmo PC, asumimos un conjunto de variables $\mathbf{X} = (X_1, \ldots, X_n)$ con una distribución de probabilidad global $P$ sobre ellas. Los subconjuntos de variables de $\mathbf{X}$ se representan mediante letras mayúsculas en negrita (por ejemplo, $\mathbf{A}, \mathbf{B}, \mathbf{C}$). La notación $I(\mathbf{A}, \mathbf{B} \mid \mathbf{C})$ denota que los conjuntos de variables $\mathbf{A}$ y $\mathbf{B}$ son condicionalmente independientes dado el conjunto $\mathbf{C}$. El algoritmo PC asume la hipótesis de fidelidad (\textit{faithfulness}). Esto significa que existe un grafo acíclico dirigido (DAG), $G$, tal que las relaciones de independencia entre las variables de $\mathbf{X}$ son exactamente aquellas representadas por $G$ mediante el criterio de $d$-separación. En consecuencia, el algoritmo PC se apoya en la posibilidad de comprobar cuándo se verifica $I(\mathbf{A}, \mathbf{B} \mid \mathbf{C})$ en el grafo $G$ y, a partir de esa información, recuperar la estructura subyacente. \citep{abellan2006variations}
+
+La idea central del método consiste en recuperar primero el esqueleto del grafo y, posteriormente, orientar las aristas que permanecen. La etapa de poda se realiza eliminando enlaces entre parejas de nodos cuando existe un subconjunto de sus vecinos que hace que ambas variables sean condicionalmente independientes dados esos vecinos. Este criterio permite reducir progresivamente el grafo completo inicial hasta un grafo no dirigido compatible con las independencias observadas. \citep{abellan2006variations}
+
+\paragraph{Fase 1: búsqueda del esqueleto}
+
+\begin{algorithm}[H]
+\caption{Algoritmo PC: fase de búsqueda del esqueleto}
+\begin{algorithmic}[1]
+\State Inicializar $G'$ como un grafo completo no dirigido sobre $\mathbf{X}$
+\State $i \gets 0$
+\Repeat
+    \For{cada par adyacente $(X,Y)$ en $G'$}
+        \If{existe $S \subseteq \mathrm{Adj}_{G'}(X) \setminus \{Y\}$ con $|S| = i$ y $I(X,Y \mid S)$}
+            \State Guardar $S_{XY} \gets S$
+            \State Eliminar la arista $X-Y$ de $G'$
+        \EndIf
+    \EndFor
+    \State $i \gets i + 1$
+\Until{$\forall X \in \mathbf{X},\; |\mathrm{Adj}_{G'}(X)| \le i$}
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Explicación de variables y notaciones}
+
+\begin{itemize}
+    \item $\mathbf{X}$ denota el conjunto completo de variables del problema.
+    \item $\mathrm{Adj}_{G'}(X)$ representa el conjunto de vecinos de $X$ en el grafo actual $G'$.
+    \item $I(X,Y \mid S)$ indica independencia condicional entre $X$ e $Y$ dado el conjunto $S$.
+    \item El principio fundamental es que, si las independencias observadas son fieles a un DAG, entonces no existe un enlace entre $X$ e $Y$ si y solo si existe un subconjunto $S$ de los vecinos de $X$ tal que $I(X,Y \mid S)$.
+\end{itemize}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Figures/PC algorithm - Abellan some variations on the PC algorithm.PNG}
+    \caption{Variaciones del algoritmo PC en la literatura reciente.}
+\end{figure}
 
 \subsection{Pruebas de Independencia Condicional y Extensiones para Causalidad}
 
