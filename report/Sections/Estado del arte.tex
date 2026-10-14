@@ -98,7 +98,7 @@ z(r) = \tfrac{1}{2}\ln\frac{1+r}{1-r},
 \qquad
 T = \sqrt{n-|\mathbf{Z}|-3}\, z(\hat{\rho}_{XY\cdot\mathbf{Z}}),
 \]
-de modo que se rechaza la hipótesis de independencia cuando $|T|$ supera el cuantil $z_{1-\alpha/2}$ de una normal estándar \citep{anderson2003introduction}. Su ventaja principal es el coste, ya que, con la matriz de covarianzas muestral ya calculada, cada contraste se reduce a invertir el bloque correspondiente, con $O(|\mathbf{Z}|^3)$ operaciones, y sus p-valores son analíticos, sin remuestreo, lo que lo convierte en el contraste habitual para datos continuos en las implementaciones de referencia \citep{kalisch2012causal, scutari2010bnlearn}, y el que sostiene la consistencia del PC en alta dimensión bajo esparsidad \citep{spirtes2000causation, kalisch2007estimating}. Su limitación es simétrica, pues la
+de modo que se rechaza la hipótesis de independencia cuando $|T|$ supera el cuantil $z_{1-\alpha/2}$ de una normal estándar \citep{anderson2003introduction}. Su ventaja principal es el coste, ya que, con la matriz de covarianzas muestral previamente calculada, cada contraste se reduce a invertir el bloque correspondiente, con $O(|\mathbf{Z}|^3)$ operaciones, y sus p-valores son analíticos, sin remuestreo, lo que lo convierte en el contraste habitual para datos continuos en las implementaciones de referencia \citep{kalisch2012causal, scutari2010bnlearn}, y el que sostiene la consistencia del PC en alta dimensión bajo estructuras poco densas \citep{spirtes2000causation, kalisch2007estimating}. Su limitación es simétrica, pues la
 equivalencia entre correlación parcial nula e independencia condicional vale solo bajo normalidad y linealidad, y fuera de ese modelo las variantes de rango únicamente la aproximan \citep{baba2004partial}. 
 
 Recientes líneas de investigación tratan de dotar de robustez a estos contrastes frente a violaciones parciales del modelo. Cuando la varianza del error no es constante, las versiones ponderadas (WLS) conservan la estructura del contraste y recuperan su calibración \citep{gunther2022conditional}. Cuando la distribución se aleja de la normalidad, los contrastes basados en correlaciones de rango mantienen la consistencia del PC bajo modelos no paranormales o de cópula gaussiana, con un coste computacional apenas mayor \citep{harris2012pcalgorithmgaussian}, y admiten además su extensión a datos mixtos mediante cópulas \citep{cui2016copula}. En muestras pequeñas, los esquemas de permutación corrigen la aproximación asintótica del p-valor \citep{tsamardinos2010permutation, legendre2000comparison}.
@@ -107,7 +107,7 @@ Recientes líneas de investigación tratan de dotar de robustez a estos contrast
 \subsubsection{Tablas de contingencia}            %(discretos)
 Para datos discretos, el contraste clásico es el de \textbf{tablas de contingencia}, el que emplean los algoritmos de aprendizaje de estructura cuando las variables son categóricas \citep{kitson2023survey}. Cada celda de la tabla conjunta recoge cuántas observaciones caen en una combinación de valores de $X$, $Y$ y las variables de $\mathbf{Z}$, y la hipótesis de independencia impone un valor esperado para cada frecuencia. El contraste mide la discrepancia entre los conteos observados y los esperados.
 
-Denotamos por $n_{ijk}$ el número de observaciones de la muestra en las que $X$ toma su valor $i$, $Y$ su valor $j$ y $\mathbf{Z}$ su $k$-ésima combinación de valores, y escribimos $n_{i\cdot k}$, $n_{\cdot jk}$ y $n_{\cdot\cdot k}$  para las sumas de $n_{ijk}$ sobre el índice sustituido por el punto. Los esperados bajo independencia se calculan precisamente a partir de esas marginales,
+Denotamos por $n_{ijk}$ el número de observaciones de la muestra en las que $X$ toma su valor $i$, $Y$ su valor $j$ y $\mathbf{Z}$ su $k$-ésima combinación de valores, y escribimos $n_{i\cdot k}$, $n_{\cdot jk}$ y $n_{\cdot\cdot k}$  para las sumas de $n_{ijk}$ sobre el índice sustituido por el punto. Los esperados bajo independencia se calculan precisamente a partir de esas sumas,
 \[
 E_{ijk} = \frac{n_{i\cdot k}\, n_{\cdot jk}}{n_{\cdot\cdot k}},
 \]
@@ -122,18 +122,73 @@ G^2 = 2\sum_{i,j,k} n_{ijk} \ln\frac{n_{ijk}}{E_{ijk}}.
 Ambos se distribuyen asintóticamente como una $\chi^2_\nu$ con
 $\nu = (I-1)(J-1)\prod_l K_l$ grados de libertad \citep{spirtes2000causation, kitson2023survey}, donde $K_l$ es el número de valores de la $l$-ésima variable de $\mathbf{Z}$, de modo que se rechaza la independencia cuando el estadístico supera el cuantil $\chi^2_{\nu,1-\alpha}$. El estadístico $G^2$ es la versión discreta del contraste de razón de verosimilitud y es proporcional a la información mutua condicional, $G^2 = 2n\, \hat{\mathrm{I}}(X,Y \mid \mathbf{Z})$, por lo que los
 contrastes de información mutua (MI) que usan por defecto las implementaciones de referencia pertenecen a esta misma familia \citep{scutari2010bnlearn}. Para variables ordinales, donde el orden de las categorías es informativo, se incorpora además el contraste de tendencia de
-Jonckheere--Terpstra en su versión asintóctica con corrección por empates, que explota ese orden en lugar de tratar los niveles como meras
-etiquetas \citep{jonckheere1954distribution, terpstra1952asymptotic}
+Jonckheere--Terpstra en su versión asintótica con corrección por empates, que explota ese orden en lugar de tratar los valores como meras
+etiquetas \citep{jonckheere1954distribution, terpstra1952asymptotic}.
 
-Su ventaja es ser el contraste canónico para datos categóricos, con p-valores analíticos y una lectura directa como divergencia entre la tabla observada y la que se esperaría bajo independencia. Cabe destacar que en las simulaciones originales del PC, $G^2$ condujo al grafo correcto con más frecuencia que $X^2$ \citep{spirtes2000causation}. Una de las principales limitaciones es el crecimiento exponencial del número de celdas  con respecto a $|\mathbf{Z}|$ y a la cardinalidad de las variables, $I \cdot J \cdot \prod_l K_l$ celdas. Esto hace que los conteos esperados se estimen con pocas observaciones por celda y la aproximación
-$\chi^2$ deje de ser fiable. Las reglas prácticas exigen un mínimo de muestras por celda, del estilo $n \ge 5\times$ el número de celdas para estimar con garantías, o asumir dependencia directamente cuando $n < 10\times$ el número de celdas \citep{spirtes2000causation}. El coste de calcular el estadístico es lineal en el número de celdas, pero ese número es justamente el cuello de botella.
+Su ventaja es ser el contraste canónico para datos categóricos, con p-valores analíticos y una lectura directa como divergencia entre la tabla observada y la que se esperaría bajo independencia. Cabe destacar que en las simulaciones originales del PC, $G^2$ condujo al grafo correcto con más frecuencia que $\chi^2$ \citep{spirtes2000causation}. Una de las principales limitaciones es el crecimiento exponencial del número de celdas  con respecto a $|\mathbf{Z}|$ y a la cardinalidad de las variables, $I \cdot J \cdot \prod_l K_l$ celdas. Esto hace que los conteos esperados se estimen con pocas observaciones por celda y la aproximación
+$\chi^2$ deje de ser fiable. Las reglas prácticas exigen un tamaño muestral de al menos cinco veces el número de celdas para estimar con garantías, o asumir dependencia cuando $n < 10\times$ el número de celdas \citep{spirtes2000causation}. El coste de calcular el estadístico es lineal en el número de celdas, pero ese número es justamente el cuello de botella.
 
-Las líneas recientes atacan precisamente esta escasez de datos. \cite{dash2003robust} propuso una tabla de contingencia suavizada, compatible con cualquier estadístico de tabla, que incorpora \emph{priors} y puede calcularse incluso con bases de datos incompletas, y mostró que mejora la recuperación estructural y reduce la divergencia de KL frente al contraste estándar, incluso con \emph{priors} no informativos y sobre todo con muestras pequeñas o muchas variables. \cite{kubkowski2021gain} propusieron el estadístico SECMI, una expansión truncada de la información mutua condicional que mantiene la potencia del contraste cuando $|\mathbf{Z}|$ es grande sin perder el control del error de tipo I. Y en la práctica, la calibración asintótica puede sustituirse por permutaciones o por esquemas semiparamétricos que corrigen el comportamiento en muestra pequeña, tal y como ofrecen las implementaciones de referencia \citep{scutari2010bnlearn, tsamardinos2010permutation}.
+Las líneas recientes atacan precisamente esta escasez de datos. \citet{dash2003robust} propuso una tabla de contingencia suavizada, compatible con cualquier estadístico de tabla, que incorpora \emph{priors} y puede calcularse incluso con bases de datos incompletas, y mostró que mejora la recuperación estructural y reduce la divergencia de KL frente al contraste estándar, incluso con \emph{priors} no informativos y sobre todo con muestras pequeñas o muchas variables. \citet{kubkowski2021gain} propusieron el estadístico SECMI, una expansión truncada de la información mutua condicional que mantiene la potencia del contraste cuando $|\mathbf{Z}|$ es grande sin perder el control del error de tipo I. Y en la práctica, la calibración asintótica puede sustituirse por permutaciones o por esquemas semiparamétricos que corrigen el comportamiento en muestra pequeña, tal y como ofrecen las implementaciones de referencia \citep{scutari2010bnlearn, tsamardinos2010permutation}.
 
 \subsubsection{Regresión y métodos de residuos}   %(mixtos;GLM → GCM, agnóstico)
+%P1. La idea y su formalización. Se regresan $X$ e $Y$ sobre $\mathbf{Z}$ y se contrasta la asociación de los residuos, con el caso lineal-normal que colapsa a Fisher z y enlaza con 2.2.1. Para mixtos, GLM y la razón de verosimilitudes anidada $\Lambda = 2(\hat\ell_{full} - \hat\ell_{red})$, una sola fórmula en total.
+Otra vía, natural cuando los datos son mixtos, consiste en no modelar la dependencia
+directamente sino eliminar el efecto de $\mathbf{Z}$ mediante regresión y contrastar la
+asociación de lo que queda. Se ajustan las regresiones de $X$ y de $Y$, dadas por las funciones $\hat{m}_X(\mathbf{z}) = \widehat{\mathbb{E}}[X \mid \mathbf{Z} = \mathbf{z}]$ y
+$\hat{m}_Y(\mathbf{z}) = \widehat{\mathbb{E}}[Y \mid \mathbf{Z} = \mathbf{z}]$, y se toman los residuos $r_i = x_i - \hat{m}_X(\mathbf{z}_i)$ y $s_i = y_i - \hat{m}_Y(\mathbf{z}_i)$. La independencia condicional implica que sus
+productos $R_i = r_i s_i$ tienen media cero. La versión general, conocida como medida de
+covarianza generalizada (GCM), se construye sobre la media muestral $\bar{R}$ de esos
+productos,
+\[
+T_n = \frac{\sqrt{n}\,\bar{R}}{\hat\sigma_R},
+\qquad
+\hat\sigma_R^2 = \frac{1}{n}\sum_{i=1}^n (R_i - \bar{R})^2,
+\]
+que bajo la hipótesis nula converge a una normal estándar siempre que las regresiones
+estimen las medias condicionales con el producto de sus errores cuadráticos medios de
+orden $o(n^{-1})$ \citep{shah2020gcm}. En el caso lineal y gaussiano este contraste
+coincide, salvo detalles de normalización, con el de la correlación parcial ya presentado
+\citep{shah2020gcm}.
+
+%P2. Ventajas y limitaciones en un párrafo. Cubre tipos mixtos y parte de la no linealidad, pero hereda la especificación de los modelos de regresión y su coste.
+Su ventaja es la flexibilidad, ya que la familia no fija la forma de la dependencia sino
+la de las medias condicionales, y admite cualquier técnica de regresión, de la lineal y
+los modelos lineales generalizados para respuestas mixtas a los bosques o los métodos de
+kernel. Sin embargo, las regresiones no son un elemento neutral en este contraste, ya que el contraste solo puede tener potencia frente a las alternativas que dejan covarianza no nula entre los residuos de
+las regresiones elegidas, de modo que elegirlas exige conocer el problema que se estudia \citep{shah2020gcm}. Además, existe un límite teórico más severo. Se demuestra
+que, sin restringir la clase nula, ningún contraste que controle uniformemente el nivel de
+significación alcanza potencia, ni siquiera frente a una única alternativa, y que la
+potencia solo se recupera restringiendo el problema, como hace la propia GCM al exigir que el producto de los errores cuadráticos medios de sus dos regresiones sea de orden $o(n^{-1})$ \citep{shah2020gcm}.
+
+%P3. Líneas recientes. El GCM como marco general de residuos, con una mención breve a doble machine learning.
+
+\citet{scheidegger2022weighted} introdujo la medida de covarianza generalizada
+ponderada (WGCM) que pesa los residuos por la varianza condicional y amplía la clase de
+alternativas detectables. Esto obliga a ceder algo de potencia en las alternativas que GCM ya cubría bien, y cuando $X$ e $Y$ son categóricos una de sus variantes alcanza potencia frente a
+todas las alternativas, fuera ya del marco continuo de ese resultado de imposibilidad. Y en el plano de la estimación, los esquemas de validación
+cruzada del doble machine learning permiten emplear regresiones flexibles sin que su
+sobreajuste contamine la calibración del contraste \citep{chernozhukov2018double}.
+
 \subsubsection{Métodos no paramétricos}           %(kernel + vecinos más cercanos)
 
+%P1. La idea y su formalización. Medidas de dependencia sin forma funcional, las basadas en kernel con HSIC y KCI como referentes, y la CMI estimada por vecinos.
 
+%P2. Ventajas y limitaciones en un párrafo. Detectan no linealidad sin supuestos paramétricos, a cambio de coste y dificultad de calibración, con RCIT y RCoT como aproximaciones rápidas.
+
+%P3. Líneas recientes. Las versiones rápidas de KCI, marcadas como preprint si se usan, los enfoques distribution-free, y la calibración por permutaciones de Doran.
+
+\subsubsection{Extensiones para causalidad}
+%P1. Apertura, de los errores del test a los errores del grafo. El encadenamiento de contrastes dentro del PC, que el nivel de significación no mide el error de la búsqueda, que las eliminaciones equivocadas se propagan a la adyacencia y a la orientación, y que la consistencia pasa por controlar $\alpha_n$. Cierra anunciando los dos bloques que siguen.
+
+%P2. Bloque A, primera parte. La $\sigma$-separation y los $\sigma$-connection graphs de Forré y Mooij, la generalización para ciclos, latentes y no linealidad.
+
+%P3. Bloque A, segunda parte. La $m$-separation y los MAG para latentes y sesgo de selección, y el FCI correcto sobre sistemas cíclicos de Mooij y Claassen.
+
+%P4. Bloque B, primera parte. Las intervenciones con conjuntos de variables solapados, COmbINE de Triantafillou y Tsamardinos.
+
+%P5. Bloque B, segunda parte. Heterogeneidad y datos mixtos sin homogeneidad ni suficiencia, HCL, y la extensión temporal con CTBN de Villa-Blanco et al.
+
+%P6. Cierre y balance. La síntesis de la escalera, de lo paramétrico canónico a lo generalizado, y el puente hacia la 2.3 de híbridos, conflictos y optimización diferenciable.
 
 \subsection{Enfoques Híbridos (Constraint-Based y Score-and-Search) y Líneas Futuras}
 
