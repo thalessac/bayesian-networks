@@ -1,0 +1,54 @@
+\section{Resumen de variantes del algoritmo PC}
+\label{app:variantes_pc}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Resumen de las principales variantes y extensiones del algoritmo PC}
+\label{tab:variantes_pc}
+\renewcommand{\arraystretch}{0.9}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3cm} >{\raggedright\arraybackslash}p{4cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Algoritmo} & \textbf{Fuente / Autores} & \textbf{Descripción} \\
+\midrule
+\textbf{PC clásico} & Spirtes, Glymour y Scheines (2000) \citep{spirtes2000causation} &
+Algoritmo fundamental basado en restricciones que estima el esqueleto mediante pruebas recursivas de independencia condicional y orienta aristas según las independencias y las reglas de Meek. \\
+\addlinespace
+\textbf{PC de alta dimensión} & Kalisch y Bühlmann (2007) \citep{kalisch2007estimating} &
+Adaptación del algoritmo PC con transformación $z$ de Fisher para la correlación parcial, con garantías de consistencia asintótica y viabilidad computacional en escenarios de alta dimensión ($p \gg n$) y grafos dispersos. \\
+\addlinespace
+\textbf{PC con conjuntos de corte y pruebas bayesianas} & Abellán, Gómez-Olmedo y Moral (2006) \citep{abellan2006variations} &
+Utiliza conjuntos de corte mínimos ($CUT_{X,Y}$), calculados mediante una variante de Ford-Fulkerson, y una puntuación bayesiana Dirichlet (BD) para reducir errores en muestras finitas. \\
+\addlinespace
+\textbf{PC-stable} & Colombo y Maathuis (2014) \citep{colombo2014order} &
+Elimina la dependencia del orden de las variables en la búsqueda del esqueleto al fijar los conjuntos de adyacencia al inicio de cada nivel de condicionamiento. \\
+\addlinespace
+\textbf{CPC-stable} \newline \textit{(Conservative PC)} & Colombo y Maathuis (2014) \citep{colombo2014order} &
+Evalúa los conjuntos separadores de triples no protegidos y considera no ambiguo un triple solo cuando la pertenencia del nodo central es consistente en todos ellos. \\
+\addlinespace
+\textbf{MPC-stable} \newline \textit{(Majority Rule PC)} & Colombo y Maathuis (2014) \citep{colombo2014order} &
+Determina la orientación de estructuras en $v$ aplicando una regla de mayoría sobre los conjuntos separadores evaluados para cada triple no protegido. \\
+\addlinespace
+\textbf{LCPC-stable / LMPC-stable} & Colombo y Maathuis (2014) \citep{colombo2014order} &
+Emplea listas de candidatos y aristas bidireccionales para resolver conflictos en las reglas de orientación de Meek y obtener resultados independientes del orden. \\
+\addlinespace
+\textbf{FCI-stable / RFCI-stable} & Colombo y Maathuis (2014) \citep{colombo2014order} &
+Extiende los principios de independencia del orden a algoritmos que contemplan variables latentes y sesgos de selección, y que producen grafos parcialmente ancestrales (PAG). \\
+\addlinespace
+\textbf{Parallel bnlearn} & Scutari (2014) &
+Distribuye entre varios núcleos la estimación de vecindarios y mantas de Markov para acelerar el aprendizaje de estructuras. \\
+\addlinespace
+\textbf{Parallel-PC} & Le et al. (2019) \citep{le2016fast} &
+Paraleliza las pruebas de independencia condicional de cada nivel del algoritmo PC-stable en procesadores multinúcleo, reduciendo el tiempo de ejecución en datos de alta dimensión. \\
+\addlinespace
+\textbf{Parallel PC (BIB / MPI)} & Madsen et al. (2017) &
+Combina diseños de bloques incompletos balanceados (BIB) para memoria compartida y comunicación MPI para memoria distribuida, con el objetivo de escalar PC a miles de variables. \\
+\addlinespace
+\textbf{$k$-PC} & Kocaoglu (2023) \citep{kocaoglu2023small} &
+Aprende clases de equivalencia de Markov para datos limitados, restringiendo las pruebas de independencia condicional a conjuntos de tamaño máximo $k$ y utilizando grafos de $k$-clausura para caracterizarlas. \\
+\addlinespace
+\textbf{Time-Aware PC (TPC)} & Biswas y Mukherjee (2024) \citep{biswas2024consistent} &
+Extiende PC a series temporales estacionarias no i.i.d. con dependencia temporal ($\rho$-mixing), estimando grafos causales intertemporales y contemporáneos mediante pruebas de Pearson y HSIC. \\
+\bottomrule
+\end{tabularx}
+\end{table}

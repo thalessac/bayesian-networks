@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{12}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -48,6 +48,14 @@ Markus Kalisch, Martin Mächler, Diego Colombo, Marloes~H. Maathuis, and Peter
   1--26, 2012.
 \newblock \doi{10.18637/jss.v047.i11}.
 
+\bibitem[Kocaoglu(2023)]{kocaoglu2023small}
+Murat Kocaoglu.
+\newblock Characterization and learning of causal graphs with small
+  conditioning sets.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~36, pages 74140--74179, 2023.
+\newblock \doi{10.52202/075280-3244}.
+
 \bibitem[Le et~al.(2019)Le, Hoang, Li, Liu, Liu, and Hu]{le2016fast}
 Thuc~Duy Le, Tao Hoang, Jiuyong Li, Lin Liu, Huawen Liu, and Shu Hu.
 \newblock A fast {PC} algorithm for high dimensional causal discovery with
@@ -74,5 +82,18 @@ Mauro Scanagatta, Antonio Salmerón, and Fabio Stella.
 Peter Spirtes, Clark Glymour, and Richard Scheines.
 \newblock \emph{Causation, Prediction, and Search}.
 \newblock MIT Press, Cambridge, MA, 2000.
+
+\bibitem[Villa-Blanco et~al.(2023)Villa-Blanco, Bregoli, Bielza, Larra{\~n}aga,
+  and Stella]{VillaBlanco2023}
+Carlos Villa-Blanco, Alessandro Bregoli, Concha Bielza, Pedro Larra{\~n}aga,
+  and Fabio Stella.
+\newblock Constraint-based and hybrid structure learning of multidimensional
+  continuous-time bayesian network classifiers.
+\newblock \emph{International Journal of Approximate Reasoning}, 159:\penalty0
+  108945, 2023.
+\newblock ISSN 0888-613X.
+\newblock \doi{10.1016/j.ijar.2023.108945}.
+\newblock URL
+  \url{https://www.sciencedirect.com/science/article/pii/S0888613X23000762}.
 
 \end{thebibliography}
