@@ -1,4 +1,4 @@
-﻿\section{Estado del arte}
+\section{Estado del arte}
 
 El panorama actual del descubrimiento de estructuras en redes bayesianas y modelos gráficos causales ha experimentado una notable evolución, transitando desde la formulación clásica de algoritmos basados en restricciones hacia métodos altamente escalables, flexibles e híbridos. Para comprender de manera sistemática este estado del arte, la presente sección se organiza en tres ejes analíticos interconectados. En primer lugar, se examina la evolución del algoritmo PC y sus variantes, abordando desde sus fundamentos teóricos y modificaciones para garantizar la independencia del orden de entrada y la paralelización, hasta sus extensiones modernas para datos temporales, valores extremos y optimización diferenciable. En segundo lugar, se analizan las pruebas de hipótesis de independencia condicional, comprendidas como el motor estadístico crítico que sustenta las decisiones de poda de aristas y orientación en presencia de variados tipos de datos. Por último, se exploran los paradigmas híbridos, los cuales integran el filtrado local por restricciones con la optimización por puntuación o la resolución lógica de conflictos para mitigar la acumulación de errores en muestras finitas y mejorar la precisión estructural.
 
@@ -49,7 +49,70 @@ Biswas y Mukherjee (2024) ampliaron los fundamentos matemáticos del algoritmo P
 
 \subsection{Pruebas de Independencia Condicional y Extensiones para Causalidad}
 
-La base del aprendizaje estructural de tipo \emph{constraint-based} reside en las pruebas de independencia condicional, que permiten decidir si dos variables son dependientes o independientes dadas otras variables del sistema...
+Las pruebas de indepencia condicional (IC) constituyen el motor estadístico del aprendizaje estructural basado en restricciones, pues cada decisión de poda y de orientación del esqueleto del grafo se reduce a determinar si dos variables son dependientes o independientes dado un conjunto de condicionamiento \citep{spirtes2000causation, Averin2026Survey}. A diferencia de las funciones de puntuación (score), que evalúan estructuras completas, el contraste IC es una decisión local y consstrastable individualmente, lo que explica la interpretabilidad característica de los métodos \emph{constraint-based}, en los que cada arista eliminada o conservada puede rastrearse hasta un constraste estadístico conreto y su p-valor \citep{Averin2026Survey, spirtes2000causation}
+
+Formalmente, dada una distribución de probabilidad $P$ sobre un conjunto de variables $\mathbf{X} = (X_1, \ldots, X_n)$, la notación $I(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z})$ denota que los conjuntos $\mathbf{X}$ e $\mathbf{Y}$ son condicionalmente independientes dado $\mathbf{Z}$, esto es, $P(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z}) = P(\mathbf{X} \mid \mathbf{Z})\,P(\mathbf{Y} \mid \mathbf{Z})$. Un contraste de IC procede sobre una muestra finita y confronta la hipótesis nula de independencia condicional $I(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z})$ con la alternativa de dependencia condicional, controlando al nivel $\alpha$ la probabilidad de falso rechazo. La relevancia de estas decisiones radica en su correspondencia con la estructura  el grafo, ya que, bajo las condiciones de Markov causal y fidelidad, una distribución es fiel a un DAG $G$ si y solo si, para todo par de conjuntos disjuntos de vértices $\mathbf{X}$, $\mathbf{Y}$ y todo conjunto $\mathbf{Z}$ disjunto de ambos, $I(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z})$ si y solo si $\mathbf{X}$ e $\mathbf{Y}$ están $d$-separados por $\mathbf{Z}$ \citep{spirtes2000causation}. Expresado matemáticamente:
+
+
+\[
+P(X_1,\dots,X_n)=\prod_{i=1}^{n}P(X_i\mid \mathrm{Pa}(X_i)) \Longleftrightarrow\;
+\forall\, X, Y,\mathbf{Z}\ \text{disjuntos}:\quad
+I(X, Y\mid\mathbf{Z})\;\Longleftrightarrow\;
+\mathbf{X}\perp_{G}\mathbf{Y}\mid\mathbf{Z}
+\] 
+
+
+Los algoritmos explotan esta equivalencia tratando cada resultado de un contraste como un hecho de $d$-separación, las independencias detectadas eliminan aristas y las dependencias restantes guían la orientación, de modo que la calidad del grafo aprendido queda acotada por la calidad de
+las decisiones estadísticas \citep{spirtes2000causation, pearl2009causality}. Los contrastes disponibles se pueden ordenar según la estructura que asumen sobre la dependencia, desde los paramétricos clásicos hasta los no paramétricos, y ninguno es universal, ya que todo contraste restringe implícitamente el tipo de dependencia que puede detectar y paga esa restricción con pérdida de potencia frente al resto de alternativas \citep{shah2020gcm}.  Introduciendo un ejemplo que se desarrollará con más detalle al presentar la correlación parcial. Para $X \sim \mathcal{N}(0,1)$ e $Y = X^2$ se cumple
+\[
+\mathbb{E}[X^3] = 0
+\quad\Longrightarrow\quad
+\mathrm{corr}(X, Y) = 0
+\qquad\text{mientras que}\qquad
+\neg I(X, Y),
+\]
+de modo que un contraste basado en la correlación parcial no detectaría esta dependencia pese a ser manifiesta.
+
+\subsubsection{Correlación parcial}              
+Para datos continuos, el contraste clásico es la \textbf{correlación parcial}. Bajo
+normalidad conjunta, $I(X, Y \mid \mathbf{Z})$ equivale a la anulación de la correlación parcial \citep{lauritzen1996graphical}.  Para cada contraste se
+toman las observaciones de $X$, $Y$ y las variables de $\mathbf{Z}$, es decir,
+$\mathbf{w}_i = (x_i,\, y_i,\, \mathbf{z}_i)$ con
+$\mathbf{z}_i \in \mathbb{R}^{|\mathbf{Z}|}$, y se calcula su matriz de covarianzas
+muestral
+\[
+S = \frac{1}{n-1}\sum_{i=1}^{n}
+\bigl(\mathbf{w}_i - \bar{\mathbf{w}}\bigr)
+\bigl(\mathbf{w}_i - \bar{\mathbf{w}}\bigr)^\top
+\;\in\; \mathbb{R}^{(|\mathbf{Z}|+2)\times(|\mathbf{Z}|+2)},
+\]
+cuya inversa, $\hat{K} = S^{-1}$, proporciona la correlación parcial muestral entre $X$ e
+$Y$ dado $\mathbf{Z}$,
+\[
+\hat{\rho}_{XY\cdot\mathbf{Z}}
+= \frac{-\hat{K}_{XY}}{\sqrt{\hat{K}_{XX}\,\hat{K}_{YY}}}.
+\]
+El contraste aplica la transformada $z$ de Fisher \citep{hotelling1953new} a ese valor muestral,
+\[
+z(r) = \tfrac{1}{2}\ln\frac{1+r}{1-r},
+\qquad
+T = \sqrt{n-|\mathbf{Z}|-3}\, z(\hat{\rho}_{XY\cdot\mathbf{Z}}),
+\]
+de modo que se rechaza la hipótesis de independencia cuando $|T|$ supera el cuantil $z_{1-\alpha/2}$ de una normal estándar \citep{anderson2003introduction}. Su ventaja principal es el coste, ya que, con la matriz de covarianzas muestral ya calculada, cada contraste se reduce a invertir el bloque correspondiente, con $O(|\mathbf{Z}|^3)$ operaciones, y sus p-valores son analíticos, sin remuestreo, lo que lo convierte en el contraste habitual para datos continuos en las implementaciones de referencia \citep{kalisch2012causal, scutari2010bnlearn}, y el que sostiene la consistencia del PC en alta dimensión bajo esparsidad \citep{spirtes2000causation, kalisch2007estimating}. Su limitación es simétrica, pues la
+equivalencia entre correlación parcial nula e independencia condicional vale solo bajo normalidad y linealidad, y fuera de ese modelo las variantes de rango únicamente la aproximan \citep{baba2004partial}. 
+
+Recientes líneas de investigación tratan de dotar de robustez a estos contrastes frente a
+violaciones parciales del modelo. Cuando la varianza del error no es constante, las versiones ponderadas (WLS) conservan la estructura del contraste y recuperan su calibración \citep{gunther2022conditional}. Cuando la distribución se aleja de la normalidad, los contrastes basados en correlaciones de rango mantienen la consistencia del PC bajo modelos no paranormales o de cópula gaussiana, con un coste computacional
+apenas mayor \citep{harris2012pcalgorithmgaussian}, y admiten además su extensión a datos mixtos mediante
+cópulas \citep{cui2016copula}. En muestras pequeñas, los esquemas de permutación corrigen
+la aproximación asintótica del p-valor \citep{tsamardinos2010permutation, legendre2000comparison}.
+
+
+\subsubsection{Tablas de contingencia}            %(discretos)
+\subsubsection{Regresión y métodos de residuos}   %(mixtos;GLM → GCM, agnóstico)
+\subsubsection{Métodos no paramétricos}           %(kernel + vecinos más cercanos)
+
+
 
 \subsection{Enfoques Híbridos (Constraint-Based y Score-and-Search) y Líneas Futuras}
 
