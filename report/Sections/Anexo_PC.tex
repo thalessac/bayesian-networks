@@ -6,46 +6,46 @@
 \footnotesize
 \caption{Principales variantes y extensiones del algoritmo PC, agrupadas según la limitación que abordan (numeración de la Sección~\ref{sec:variantes_pc}).}
 \label{tab:variantes_pc}
-\renewcommand{\arraystretch}{1.0}
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.7cm} >{\raggedright\arraybackslash}p{2.9cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.8cm}}
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{4.2cm}}
 \toprule
-\textbf{Variante} & \textbf{Referencia} & \textbf{Aportación principal} & \textbf{Garantías / coste} \\
+\textbf{Variante} & \textbf{Aportación principal} & \textbf{Garantías / coste} \\
 \midrule
-\multicolumn{4}{l}{\textit{Algoritmo de partida}} \\
-PC & \citet{spirtes1991algorithm, spirtes2000causation} & Poda del grafo completo con contrastes de orden creciente; orientación de estructuras en $v$ y reglas de \citet{meek1995causal}; devuelve un CPDAG. & Correcto y completo con oráculo; polinómico si el grado está acotado. \\
+\multicolumn{3}{l}{\textit{Algoritmo de partida}} \\
+\textbf{PC} \newline \citet{spirtes1991algorithm} & Poda del grafo completo con contrastes de orden creciente; orientación de estructuras en $v$ y reglas de \citet{meek1995causal}; devuelve un CPDAG. & Correcto y completo con oráculo; polinómico si el grado está acotado. \\
 \midrule
-\multicolumn{4}{l}{\textit{(i) Garantías en alta dimensión}} \\
-PC muestral gaussiano & \citet{kalisch2007estimating} & Correlación parcial con $z$ de Fisher y nivel $\alpha_n \to 0$. & Consistente con $p = O(n^a)$ y grafos dispersos; exige fidelidad fuerte \citep{uhler2013geometry}. \\
+\multicolumn{3}{l}{\textit{(i) Garantías en alta dimensión}} \\
+\textbf{PC muestral gaussiano} \newline \citet{kalisch2007estimating} & Correlación parcial con $z$ de Fisher y nivel $\alpha_n \to 0$. & Consistente con $p = O(n^a)$ y grafos dispersos; exige fidelidad fuerte \citep{uhler2013geometry}. \\
 \midrule
-\multicolumn{4}{l}{\textit{(ii) Dependencia del orden}} \\
-CPC & \citet{ramsey2006adjacency} & Orienta un triple solo si todos sus conjuntos separadores coinciden; si no, lo marca como ambiguo. & Menos errores de orientación, salida menos informativa. \\
+\multicolumn{3}{l}{\textit{(ii) Dependencia del orden}} \\
+\textbf{CPC} \newline \citet{ramsey2006adjacency} & Orienta un triple solo si todos sus conjuntos separadores coinciden; si no, lo marca como ambiguo. & Menos errores de orientación, salida menos informativa. \\
 \addlinespace
-PC-stable & \citet{colombo2014order} & Congela las adyacencias al inicio de cada nivel $\ell$. & Esqueleto independiente del orden; más contrastes. \\
+\textbf{PC-stable} \newline \citet{colombo2014order} & Congela las adyacencias al inicio de cada nivel $\ell$. & Esqueleto independiente del orden; más contrastes. \\
 \addlinespace
-CPC-, MPC-, LCPC-, LMPC-stable & \citet{colombo2014order} & Orientación conservadora, por mayoría o con listas de conflictos y aristas bidireccionales; extensión a FCI y RFCI. & Salida completa independiente del orden; consistencia en alta dimensión. \\
+\textbf{CPC-, MPC-, LCPC-, LMPC-stable} \newline \citet{colombo2014order} & Orientación conservadora, por mayoría o con listas de conflictos y aristas bidireccionales; extensión a FCI y RFCI. & Salida completa independiente del orden; consistencia en alta dimensión. \\
 \midrule
-\multicolumn{4}{l}{\textit{(iii) Errores con conjuntos de condicionamiento grandes}} \\
-PC con cortes mínimos y BD & \citet{abellan2006variations} & Conjuntos de corte mínimos ($CUT_{X,Y}$), contraste bayesiano BD, resolución de triángulos y refinamiento voraz. & Datos discretos; mejora empírica en muestras finitas. \\
+\multicolumn{3}{l}{\textit{(iii) Errores con conjuntos de condicionamiento grandes}} \\
+\textbf{PC con cortes mínimos y BD} \newline \citet{abellan2006variations} & Conjuntos de corte mínimos ($CUT_{X,Y}$), contraste bayesiano BD, resolución de triángulos y refinamiento voraz. & Datos discretos; mejora empírica en muestras finitas. \\
 \addlinespace
-$k$-PC & \citet{kocaoglu2023small} & Solo contrastes con $|\mathbf{S}| \le k$; aprende la clase de $k$-equivalencia mediante grafos de $k$-clausura. & Clase menos fina; más robusto en muestras pequeñas. \\
+\textbf{$k$-PC} \newline \citet{kocaoglu2023small} & Solo contrastes con $|\mathbf{S}| \le k$; aprende la clase de $k$-equivalencia mediante grafos de $k$-clausura. & Clase menos fina; más robusto en muestras pequeñas. \\
 \midrule
-\multicolumn{4}{l}{\textit{(iv) Coste computacional}} \\
-PC paralelo (BIB / MPI) & \citet{madsen2017parallel} & Hilos con diseños de bloques incompletos balanceados y procesos MPI sobre subconjuntos de casos. & Aceleración significativa en datos grandes. \\
+\multicolumn{3}{l}{\textit{(iv) Coste computacional}} \\
+\textbf{PC paralelo (BIB / MPI)} \newline \citet{madsen2017parallel} & Hilos con diseños de bloques incompletos balanceados y procesos MPI sobre subconjuntos de casos. & Aceleración significativa en datos grandes. \\
 \addlinespace
-\texttt{bnlearn} paralelo & \citet{scutari2017bayesian} & Marco paralelo para algoritmos basados en restricciones como alternativa al \emph{backtracking}. & Más estable y rápido en hardware multinúcleo. \\
+\textbf{\texttt{bnlearn} paralelo} \newline \citet{scutari2017bayesian} & Marco paralelo para algoritmos basados en restricciones como alternativa al \emph{backtracking}. & Más estable y rápido en hardware multinúcleo. \\
 \addlinespace
-Parallel-PC & \citet{le2016fast} & Reparte entre núcleos los contrastes de cada nivel de PC-stable. & Independiente del orden; DREAM5 de $>24$\,h a $<6$\,h. \\
+\textbf{Parallel-PC} \newline \citet{le2016fast} & Reparte entre núcleos los contrastes de cada nivel de PC-stable. & Independiente del orden; DREAM5 de $>24$\,h a $<6$\,h. \\
 \midrule
-\multicolumn{4}{l}{\textit{(v) Relajación de supuestos}} \\
-TPC & \citet{biswas2024consistent} & PC para series temporales con relaciones retardadas y contemporáneas; contrastes de Pearson y HSIC. & Consistente bajo $\rho$-\emph{mixing} y mezcla fuerte. \\
+\multicolumn{3}{l}{\textit{(v) Relajación de supuestos}} \\
+\textbf{TPC} \newline \citet{biswas2024consistent} & PC para series temporales con relaciones retardadas y contemporáneas; contrastes de Pearson y HSIC. & Consistente bajo $\rho$-\emph{mixing} y mezcla fuerte. \\
 \addlinespace
-PCMCI & \citet{runge2019detecting} & Selección de condicionantes de tipo PC seguida de un contraste MCI. & Controla falsos positivos por autocorrelación. \\
+\textbf{PCMCI} \newline \citet{runge2019detecting} & Selección de condicionantes de tipo PC seguida de un contraste MCI. & Controla falsos positivos por autocorrelación. \\
 \addlinespace
-PCstar & \citet{Amendola2026PCstar} & Redes max-lineales (eventos extremos); fidelidad a la $C$-separación. & Orienta aristas adicionales; polinómico con grado de entrada acotado. \\
+\textbf{PCstar} \newline \citet{Amendola2026PCstar} & Redes max-lineales (eventos extremos); fidelidad a la $C$-separación. & Orienta aristas adicionales; polinómico con grado de entrada acotado. \\
 \midrule
-\multicolumn{4}{l}{\textit{Decisiones suaves}} \\
-DAGPA & \citet{zhou2025differentiable} & $d$-separación diferenciable por percolación; optimización por gradiente con p-valores como etiquetas suaves. & Robusto en muestras pequeñas; puente hacia los híbridos. \\
+\multicolumn{3}{l}{\textit{Decisiones suaves}} \\
+\textbf{DAGPA} \newline \citet{zhou2025differentiable} & $d$-separación diferenciable por percolación; optimización por gradiente con p-valores como etiquetas suaves. & Robusto en muestras pequeñas; puente hacia los híbridos. \\
 \bottomrule
 \end{tabularx}
 \end{table}
