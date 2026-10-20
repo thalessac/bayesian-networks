@@ -55,7 +55,7 @@ La Tabla~\ref{tab:variantes_pc}, en el Apéndice~\ref{app:variantes_pc}, resume 
 \subsection{Pruebas de Independencia Condicional y Extensiones para Causalidad}
 \label{sec:pruebas_ic}
 
-Las pruebas de indepencia condicional (IC) constituyen el motor estadístico del aprendizaje estructural basado en restricciones, pues cada decisión de poda y de orientación del esqueleto del grafo se reduce a determinar si dos variables son dependientes o independientes dado un conjunto de condicionamiento \citep{spirtes2000causation, Averin2026Survey}. A diferencia de las funciones de puntuación (score), que evalúan estructuras completas, el contraste IC es una decisión local y consstrastable individualmente, lo que explica la interpretabilidad característica de los métodos \emph{constraint-based}, en los que cada arista eliminada o conservada puede rastrearse hasta un constraste estadístico conreto y su p-valor \citep{Averin2026Survey, spirtes2000causation}
+Las pruebas de indepencia condicional (IC) constituyen el motor estadístico del aprendizaje estructural basado en restricciones, pues cada decisión de poda y de orientación del esqueleto del grafo se reduce a determinar si dos variables son dependientes o independientes dado un conjunto de condicionamiento \citep{spirtes2000causation, Averin2026Survey}. A diferencia de las funciones de puntuación (score), que evalúan estructuras completas, el contraste IC es una decisión local y constrastable individualmente, lo que explica la interpretabilidad característica de los métodos \emph{constraint-based}, en los que cada arista eliminada o conservada puede rastrearse hasta un constraste estadístico conreto y su p-valor \citep{Averin2026Survey, spirtes2000causation}
 
 Formalmente, dada una distribución de probabilidad $P$ sobre un conjunto de variables $\mathbf{X} = (X_1, \ldots, X_n)$, la notación $I(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z})$ denota que los conjuntos $\mathbf{X}$ e $\mathbf{Y}$ son condicionalmente independientes dado $\mathbf{Z}$, esto es, $P(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z}) = P(\mathbf{X} \mid \mathbf{Z})\,P(\mathbf{Y} \mid \mathbf{Z})$. Un contraste de IC procede sobre una muestra finita y confronta la hipótesis nula de independencia condicional $I(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z})$ con la alternativa de dependencia condicional, controlando al nivel $\alpha$ la probabilidad de falso rechazo. La relevancia de estas decisiones radica en su correspondencia con la estructura  el grafo, ya que, bajo las condiciones de Markov causal y fidelidad, una distribución es fiel a un DAG $G$ si y solo si, para todo par de conjuntos disjuntos de vértices $\mathbf{X}$, $\mathbf{Y}$ y todo conjunto $\mathbf{Z}$ disjunto de ambos, $I(\mathbf{X}, \mathbf{Y} \mid \mathbf{Z})$ si y solo si $\mathbf{X}$ e $\mathbf{Y}$ están $d$-separados por $\mathbf{Z}$ \citep{spirtes2000causation}. Expresado matemáticamente:
 
@@ -196,11 +196,11 @@ La familia sigue creciendo por dos vías, la estadística y la calibración. En 
 los contrastes \emph{distribution-free} fijan la distribución nula sin depender de las
 distribuciones de los datos, y su índice, que se anula si y solo si hay independencia
 condicional, tiene potencia frente a alternativas fijas y se calcula en tiempo cuadrático
-\citep{cai2022distribution}. En la calibración, el contraste de Doran y colaboradores conserva
+\citep{cai2022distribution}. En la calibración, el contraste de \citet{doran2014permutation} conserva
 la estadística de kernel y calibra con una permutación aprendida, que transforma el problema
 en un contraste de dos muestras de kernel entre la muestra permutada y la original, gana
 una potencia competitiva y estima mejor la distribución nula a medida que crece
-$|\mathbf{Z}|$ \citep{doran2014permutation}.
+$|\mathbf{Z}|$.
 
 \subsubsection{Extensiones para causalidad}
 %P1. Apertura, de los errores del test a los errores del grafo. El encadenamiento de contrastes dentro del PC, que el nivel de significación no mide el error de la búsqueda, que las eliminaciones equivocadas se propagan a la adyacencia y a la orientación, y que la consistencia pasa por controlar $\alpha_n$. Cierra anunciando los dos bloques que siguen.
@@ -209,7 +209,7 @@ método basado en restricciones es el de una cadena de ellos. Estos métodos eli
 orientan aristas a partir de una serie de contrastes de independencia \citep{kitson2023survey, glymour2019review},
 y en esa cadena ni el nivel de significación ni la potencia miden el error de la búsqueda
 salvo en muestras muy grandes, pues la probabilidad de rechazar alguna hipótesis verdadera
-no viene dada por el nivel del contraste, puede muy superarlo y depende del número de
+no viene dada por el nivel del contraste, puede superarlo con creces y depende del número de
 contrastes y de la estructura que el algoritmo recorre \citep{spirtes2000causation}. El
 efecto se deja ver también degradando la propia propagación, una eliminación errónea de
 una arista altera los conjuntos de adyacencia que atraviesan los contrastes siguientes,
