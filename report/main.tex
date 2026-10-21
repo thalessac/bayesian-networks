@@ -2,6 +2,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\renewcommand{\figurename}{Figura}
 \usepackage{amsmath,amssymb}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{natbib}
@@ -36,7 +37,9 @@ Juan David Cárdenas\\
 \maketitle
 
 \begin{abstract}
-resumen resumen resumen
+Las redes bayesianas son modelos gráficos probabilísticos que permiten representar de forma compacta e interpretable las dependencias condicionales entre un conjunto de variables aleatorias. Cuando la estructura de estos modelos no puede especificarse a partir del conocimiento experto, el aprendizaje estructural a partir de datos permite reconstruirla, y la literatura distingue tres familias de métodos: basados en puntuación y búsqueda, basados en restricciones e híbridos. Este trabajo revisa el estado del arte del aprendizaje basado en restricciones, con el algoritmo PC como eje central. Se examinan sus fundamentos teóricos (condición de Markov causal, fidelidad y d-separación) y las cinco limitaciones que surgen en muestras finitas: ausencia de garantías en alta dimensión, dependencia del orden de las variables, pérdida de potencia al crecer el conjunto de condicionamiento, coste computacional y rigidez de los supuestos. Para cada una se analizan las variantes propuestas, desde CPC, PC-stable y k-PC hasta las versiones paralelas, las extensiones para series temporales, eventos extremos y variables latentes, y las formulaciones diferenciables. A continuación se comparan las pruebas de independencia condicional (correlación parcial, tablas de contingencia, métodos de regresión y contrastes no paramétricos basados en kernel) junto con sus extensiones causales, subrayando que ninguna es universal. Por último, se estudian los enfoques híbridos, que combinan restricciones y optimización por puntuación para mitigar la propagación de errores, y se discuten sus limitaciones. La revisión concluye que el rendimiento depende de la interacción entre potencia estadística, coste y supuestos causales, y que no existe una estrategia dominante. Todo ello sitúa el problema de la inferencia estructural dentro del marco del descubrimiento causal a partir de datos observacionales.
+
+\textbf{Palabras clave:} redes bayesianas, aprendizaje estructural, algoritmo PC, independencia condicional, descubrimiento causal, métodos híbridos.
 \end{abstract}
 
 \input{Sections/Introducción}
