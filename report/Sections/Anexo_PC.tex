@@ -3,52 +3,49 @@
 
 \begin{table}[htbp]
 \centering
-\small
-\caption{Resumen de las principales variantes y extensiones del algoritmo PC}
+\footnotesize
+\caption{Principales variantes y extensiones del algoritmo PC, agrupadas según la limitación que abordan (numeración de la Sección~\ref{sec:variantes_pc}).}
 \label{tab:variantes_pc}
-\renewcommand{\arraystretch}{0.9}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3cm} >{\raggedright\arraybackslash}p{4cm} >{\raggedright\arraybackslash}X}
+\renewcommand{\arraystretch}{1.1}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{4.2cm}}
 \toprule
-\textbf{Algoritmo} & \textbf{Fuente / Autores} & \textbf{Descripción} \\
+\textbf{Variante} & \textbf{Aportación principal} & \textbf{Garantías / coste} \\
 \midrule
-\textbf{PC clásico} & Spirtes, Glymour y Scheines (2000) \citep{spirtes2000causation} &
-Algoritmo fundamental basado en restricciones que estima el esqueleto mediante pruebas recursivas de independencia condicional y orienta aristas según las independencias y las reglas de Meek. \\
+\multicolumn{3}{l}{\textit{Algoritmo de partida}} \\
+\textbf{PC} \newline \citet{spirtes1991algorithm} & Poda del grafo completo con contrastes de orden creciente; orientación de estructuras en $v$ y reglas de \citet{meek1995causal}; devuelve un CPDAG. & Correcto y completo con oráculo; polinómico si el grado está acotado. \\
+\midrule
+\multicolumn{3}{l}{\textit{(i) Garantías en alta dimensión}} \\
+\textbf{PC muestral gaussiano} \newline \citet{kalisch2007estimating} & Correlación parcial con $z$ de Fisher y nivel $\alpha_n \to 0$. & Consistente con $p = O(n^a)$ y grafos dispersos; exige fidelidad fuerte \citep{uhler2013geometry}. \\
+\midrule
+\multicolumn{3}{l}{\textit{(ii) Dependencia del orden}} \\
+\textbf{CPC} \newline \citet{ramsey2006adjacency} & Orienta un triple solo si todos sus conjuntos separadores coinciden; si no, lo marca como ambiguo. & Menos errores de orientación, salida menos informativa. \\
 \addlinespace
-\textbf{PC de alta dimensión} & Kalisch y Bühlmann (2007) \citep{kalisch2007estimating} &
-Adaptación del algoritmo PC con transformación $z$ de Fisher para la correlación parcial, con garantías de consistencia asintótica y viabilidad computacional en escenarios de alta dimensión ($p \gg n$) y grafos dispersos. \\
+\textbf{PC-stable} \newline \citet{colombo2014order} & Congela las adyacencias al inicio de cada nivel $\ell$. & Esqueleto independiente del orden; más contrastes. \\
 \addlinespace
-\textbf{PC con conjuntos de corte y pruebas bayesianas} & Abellán, Gómez-Olmedo y Moral (2006) \citep{abellan2006variations} &
-Utiliza conjuntos de corte mínimos ($CUT_{X,Y}$), calculados mediante una variante de Ford-Fulkerson, y una puntuación bayesiana Dirichlet (BD) para reducir errores en muestras finitas. \\
+\textbf{CPC-, MPC-, LCPC-, LMPC-stable} \newline \citet{colombo2014order} & Orientación conservadora, por mayoría o con listas de conflictos y aristas bidireccionales; extensión a FCI y RFCI. & Salida completa independiente del orden; consistencia en alta dimensión. \\
+\midrule
+\multicolumn{3}{l}{\textit{(iii) Errores con conjuntos de condicionamiento grandes}} \\
+\textbf{PC con cortes mínimos y BD} \newline \citet{abellan2006variations} & Conjuntos de corte mínimos ($CUT_{X,Y}$), contraste bayesiano BD, resolución de triángulos y refinamiento voraz. & Datos discretos; mejora empírica en muestras finitas. \\
 \addlinespace
-\textbf{PC-stable} & Colombo y Maathuis (2014) \citep{colombo2014order} &
-Elimina la dependencia del orden de las variables en la búsqueda del esqueleto al fijar los conjuntos de adyacencia al inicio de cada nivel de condicionamiento. \\
+\textbf{$k$-PC} \newline \citet{kocaoglu2023small} & Solo contrastes con $|\mathbf{S}| \le k$; aprende la clase de $k$-equivalencia mediante grafos de $k$-clausura. & Clase menos fina; más robusto en muestras pequeñas. \\
+\midrule
+\multicolumn{3}{l}{\textit{(iv) Coste computacional}} \\
+\textbf{PC paralelo (BIB / MPI)} \newline \citet{madsen2017parallel} & Hilos con diseños de bloques incompletos balanceados y procesos MPI sobre subconjuntos de casos. & Aceleración significativa en datos grandes. \\
 \addlinespace
-\textbf{CPC-stable} \newline \textit{(Conservative PC)} & Colombo y Maathuis (2014) \citep{colombo2014order} &
-Evalúa los conjuntos separadores de triples no protegidos y considera no ambiguo un triple solo cuando la pertenencia del nodo central es consistente en todos ellos. \\
+\textbf{\texttt{bnlearn} paralelo} \newline \citet{scutari2017bayesian} & Marco paralelo para algoritmos basados en restricciones como alternativa al \emph{backtracking}. & Más estable y rápido en hardware multinúcleo. \\
 \addlinespace
-\textbf{MPC-stable} \newline \textit{(Majority Rule PC)} & Colombo y Maathuis (2014) \citep{colombo2014order} &
-Determina la orientación de estructuras en $v$ aplicando una regla de mayoría sobre los conjuntos separadores evaluados para cada triple no protegido. \\
+\textbf{Parallel-PC} \newline \citet{le2016fast} & Reparte entre núcleos los contrastes de cada nivel de PC-stable. & Independiente del orden; DREAM5 de $>24$\,h a $<6$\,h. \\
+\midrule
+\multicolumn{3}{l}{\textit{(v) Relajación de supuestos}} \\
+\textbf{TPC} \newline \citet{biswas2024consistent} & PC para series temporales con relaciones retardadas y contemporáneas; contrastes de Pearson y HSIC. & Consistente bajo $\rho$-\emph{mixing} y mezcla fuerte. \\
 \addlinespace
-\textbf{LCPC-stable / LMPC-stable} & Colombo y Maathuis (2014) \citep{colombo2014order} &
-Emplea listas de candidatos y aristas bidireccionales para resolver conflictos en las reglas de orientación de Meek y obtener resultados independientes del orden. \\
+\textbf{PCMCI} \newline \citet{runge2019detecting} & Selección de condicionantes de tipo PC seguida de un contraste MCI. & Controla falsos positivos por autocorrelación. \\
 \addlinespace
-\textbf{FCI-stable / RFCI-stable} & Colombo y Maathuis (2014) \citep{colombo2014order} &
-Extiende los principios de independencia del orden a algoritmos que contemplan variables latentes y sesgos de selección, y que producen grafos parcialmente ancestrales (PAG). \\
-\addlinespace
-\textbf{Parallel bnlearn} & Scutari (2014) &
-Distribuye entre varios núcleos la estimación de vecindarios y mantas de Markov para acelerar el aprendizaje de estructuras. \\
-\addlinespace
-\textbf{Parallel-PC} & Le et al. (2019) \citep{le2016fast} &
-Paraleliza las pruebas de independencia condicional de cada nivel del algoritmo PC-stable en procesadores multinúcleo, reduciendo el tiempo de ejecución en datos de alta dimensión. \\
-\addlinespace
-\textbf{Parallel PC (BIB / MPI)} & Madsen et al. (2017) &
-Combina diseños de bloques incompletos balanceados (BIB) para memoria compartida y comunicación MPI para memoria distribuida, con el objetivo de escalar PC a miles de variables. \\
-\addlinespace
-\textbf{$k$-PC} & Kocaoglu (2023) \citep{kocaoglu2023small} &
-Aprende clases de equivalencia de Markov para datos limitados, restringiendo las pruebas de independencia condicional a conjuntos de tamaño máximo $k$ y utilizando grafos de $k$-clausura para caracterizarlas. \\
-\addlinespace
-\textbf{Time-Aware PC (TPC)} & Biswas y Mukherjee (2024) \citep{biswas2024consistent} &
-Extiende PC a series temporales estacionarias no i.i.d. con dependencia temporal ($\rho$-mixing), estimando grafos causales intertemporales y contemporáneos mediante pruebas de Pearson y HSIC. \\
+\textbf{PCstar} \newline \citet{Amendola2026PCstar} & Redes max-lineales (eventos extremos); fidelidad a la $C$-separación. & Orienta aristas adicionales; polinómico con grado de entrada acotado. \\
+\midrule
+\multicolumn{3}{l}{\textit{Decisiones suaves}} \\
+\textbf{DAGPA} \newline \citet{zhou2025differentiable} & $d$-separación diferenciable por percolación; optimización por gradiente con p-valores como etiquetas suaves. & Robusto en muestras pequeñas; puente hacia los híbridos. \\
 \bottomrule
 \end{tabularx}
 \end{table}
