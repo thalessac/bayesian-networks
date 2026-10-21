@@ -375,40 +375,461 @@
   \end{alertblock}
 \end{frame}
 
-% ===========================================================================
-\section[Enfoques híbridos]{Enfoques híbridos y líneas futuras}
-% ===========================================================================
+% ============================================================================
+% SOLO SECCION 3 - Pegar DENTRO del documento principal.
+% No contiene documentclass, usepackage, begin{document}, end{document} ni appendix.
+% Usa TikZ, booktabs y los colores upmblue/upmcyan/upmorange/upmgray/upmlight,
+% que ya estan definidos en vuestra plantilla.
+%
+% En vuestro main.tex: reemplazar TODO el bloque desde
+%   \section[Enfoques híbridos]{Enfoques híbridos y líneas futuras}
+% hasta justo ANTES de \begin{frame}[t]{Referencias}
+% por el contenido completo de este archivo.
+%
+% Duracion prevista: 14:00 de contenido + ~0:30 de apertura y transicion,
+% con margen para ajustarse a los 15 minutos de la seccion.
+% ============================================================================
 
-% ---------------------------------------------------------------------------
-\begin{frame}[t]{Enfoques híbridos}
-  \begin{center}
-    \begin{tikzpicture}[node distance=0.9cm]
-      \node[flow] (filtro) {Filtro por\\restricciones};
-      \node[flow,right=of filtro] (busqueda) {Búsqueda local\\por puntuación};
-      \node[flow,right=of busqueda] (refinada) {Estructura\\refinada};
-      \draw[flow arrow] (filtro) -- (busqueda);
-      \draw[flow arrow] (busqueda) -- (refinada);
-    \end{tikzpicture}
-  \end{center}
+% --- Estilos específicos de la sección de enfoques híbridos ---
+\tikzset{
+  hybridcard/.style={draw=upmblue!45, fill=upmlight, rounded corners=4pt,
+    align=center, line width=.7pt, minimum height=1.50cm,
+    inner sep=5pt, font=\small},
+  hybridstep/.style={draw=upmblue!75, fill=upmblue!7, rounded corners=3pt,
+    align=center, minimum height=1.25cm, text width=2.45cm,
+    inner sep=5pt, font=\small},
+  hybridorange/.style={draw=upmorange!80, fill=upmorange!7, rounded corners=3pt,
+    align=center, minimum height=1.25cm, text width=2.45cm,
+    inner sep=5pt, font=\small},
+  hybridarrow/.style={-{Latex[length=2.3mm]}, draw=upmorange, line width=1.2pt}
+}
+\providecommand{\hybridsource}[1]{\par\vfill{\color{upmgray}\fontsize{7.6}{9}\selectfont\hfill #1}}
+\providecommand{\hybridtag}[1]{\textcolor{upmcyan}{\bfseries #1}}
+
+% Macros añadidas solo para los gráficos del bloque híbrido.
+\tikzset{
+  hybridvertex/.style={circle,draw=upmblue,fill=upmlight,
+    minimum size=.69cm,inner sep=1pt,font=\small\bfseries},
+  hybridedge/.style={draw=upmblue,line width=1.4pt},
+  hybridstat/.style={draw=upmcyan!70,fill=upmcyan!7,rounded corners=4pt,
+    minimum height=1.36cm,align=center,inner sep=6pt,font=\normalsize}
+}
+
+\section[Enfoques híbridos]{Enfoques híbridos y líneas futuras}
+
+% 01 / 00:55 — Motivación.
+% GUION PARA QUIEN PRESENTE: Explicar que constraint-based y score-based resuelven problemas distintos y sus debilidades motivan combinarlos.
+\begin{frame}[t]{Motivación}
+  \vspace{.12cm}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Idea}
-        \begin{itemize}
-          \item \slot{Qué aporta cada fase}
-          \item \slot{Qué se gana}
+    \begin{column}{.48\textwidth}
+      \begin{block}{\textit{Constraint-based}}
+        \begin{itemize}\setlength{\itemsep}{5pt}
+          \item Pruebas de \textbf{independencia condicional} (IC).
+          \item El número de pruebas puede crecer mucho.
+          \item Un error temprano puede \textbf{propagarse}.
         \end{itemize}
       \end{block}
     \end{column}
-    \begin{column}{0.49\textwidth}
-      \begin{exampleblock}{Ejemplo}
-        \slot{Algoritmo híbrido representativo.}
-      \end{exampleblock}
-      \begin{alertblock}{Pendiente}
-        \slot{Completar con la revisión de la sección de híbridos.}
+    \begin{column}{.48\textwidth}
+      \begin{block}{\textit{Score-and-search}}
+        \begin{itemize}\setlength{\itemsep}{5pt}
+          \item Asigna una \textbf{puntuación} a cada estructura.
+          \item El espacio de DAGs es enorme.
+          \item La búsqueda voraz puede acabar en \textbf{óptimos locales}.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{.20cm}
+  \begin{exampleblock}{La idea híbrida}
+    \centering \textbf{Usar las dependencias entre variables para orientar la optimización.}\\
+    Combinar fortalezas \emph{no} garantiza superar a ambos métodos por separado.
+  \end{exampleblock}
+  \hybridsource{Fuente: Kitson et al. (2023)}
+\end{frame}
+
+% 02 / 01:10 — Arquitectura.
+% GUION PARA QUIEN PRESENTE: Describir restrict como filtro y maximise como optimizacion; recordar el riesgo de eliminar una arista cierta.
+\begin{frame}[t]{\textit{Restrict/Maximise}: ¿cómo funciona un híbrido clásico?}
+  \vspace{.13cm}
+  \begin{center}
+    \begin{tikzpicture}[node distance=.37cm]
+      \node[hybridstep,text width=2.3cm,minimum height=1.55cm] (datos) {\textbf{Datos}\\[3pt]\small Observaciones de\\las variables};
+      \node[hybridstep,text width=2.50cm,minimum height=1.55cm,right=of datos] (filtro) {\textbf{1. RESTRICT}\\[3pt]\small Tests de IC:\\candidatos};
+      \node[hybridorange,text width=2.50cm,minimum height=1.55cm,right=of filtro] (opt) {\textbf{2. MAXIMISE}\\[3pt]\small Búsqueda por\\puntuación};
+      \node[hybridstep,text width=2.2cm,minimum height=1.55cm,right=of opt] (out) {\textbf{Resultado}\\[3pt]\small DAG con aristas\\orientadas};
+      \draw[hybridarrow] (datos)--(filtro);
+      \draw[hybridarrow] (filtro)--(opt);
+      \draw[hybridarrow] (opt)--(out);
+    \end{tikzpicture}
+  \end{center}
+  \vspace{.24cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.48\textwidth}
+      \begin{block}{Ventaja esperada}
+        \centering Menos candidatos \(\Rightarrow\) búsqueda más manejable.
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{alertblock}{Riesgo central}
+        \centering La búsqueda no recupera una arista \textbf{prohibida por el filtro}.
       \end{alertblock}
     \end{column}
   \end{columns}
+  \hybridsource{Fuente: Kitson et al. (2023). Esquema conceptual, no algoritmo específico.}
 \end{frame}
+
+% 03 / 01:10 — Ejemplo pedagogico; figura deliberadamente ficticia.
+% GUION PARA QUIEN PRESENTE: El dibujo es inventado: si la arista B-D queda fuera, ningun score la puede recuperar.
+\begin{frame}[t]{Ejemplo: una restricción demasiado estricta}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.47\textwidth}
+      \begin{block}{Esqueleto que querríamos recuperar}
+        \centering
+        \begin{tikzpicture}[scale=.91,every node/.style={transform shape}]
+          \node[hybridvertex] (a) at (0,1.5) {A};
+          \node[hybridvertex] (b) at (2.5,1.5) {B};
+          \node[hybridvertex] (c) at (0,0) {C};
+          \node[hybridvertex] (d) at (2.5,0) {D};
+          \draw[hybridedge] (a)--(b);
+          \draw[hybridedge] (b)--(d);
+          \draw[hybridedge] (c)--(d);
+        \end{tikzpicture}
+        \vspace{.09cm}
+        \par\small Tres conexiones relevantes.
+      \end{block}
+    \end{column}
+    \begin{column}{.47\textwidth}
+      \begin{block}{Candidatos tras un test erróneo}
+        \centering
+        \begin{tikzpicture}[scale=.91,every node/.style={transform shape}]
+          \node[hybridvertex] (a) at (0,1.5) {A};
+          \node[hybridvertex] (b) at (2.5,1.5) {B};
+          \node[hybridvertex] (c) at (0,0) {C};
+          \node[hybridvertex] (d) at (2.5,0) {D};
+          \draw[hybridedge] (a)--(b);
+          \draw[hybridedge] (c)--(d);
+          \draw[upmorange,densely dashed,line width=1.5pt] (b)--(d);
+          \node[font=\scriptsize,text=upmorange,anchor=west] at (2.65,.65) {excluida};
+        \end{tikzpicture}
+        \vspace{.09cm}
+        \par\small La arista B--D queda fuera de la búsqueda.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{.20cm}
+  \begin{alertblock}{Problema de fondo}
+    \centering Optimizar muy bien \emph{dentro} del espacio permitido no corrige un filtro equivocado.
+  \end{alertblock}
+  \hybridsource{Ejemplo didáctico inventado para explicar el compromiso; no corresponde a un experimento.}
+\end{frame}
+
+% 04 / 01:05 — CB.
+% GUION PARA QUIEN PRESENTE: CB usa informacion de PC para obtener un orden; K2 usa ese orden y las etapas se alternan.
+\begin{frame}[t]{CB (1993): restringir mediante una ordenación}
+  \vspace{.14cm}
+  \begin{center}
+    \begin{tikzpicture}[node distance=.56cm]
+      \node[hybridstep,text width=2.9cm,minimum height=1.25cm] (pc) {\textbf{PC + tests de IC}\\\small Información estructural};
+      \node[hybridstep,text width=2.9cm,minimum height=1.25cm,right=of pc] (ord) {\textbf{Orden de variables}\\\small Limita padres posibles};
+      \node[hybridorange,text width=2.9cm,minimum height=1.25cm,right=of ord] (k2) {\textbf{K2}\\\small Búsqueda voraz con score};
+      \draw[hybridarrow] (pc)--(ord);
+      \draw[hybridarrow] (ord)--(k2);
+      \draw[hybridarrow,rounded corners=6pt] (k2.south) -- ++(0,-.85) -| node[pos=.25,below,font=\scriptsize,text=upmorange] {Itera y amplía conjuntos condicionantes} (pc.south);
+    \end{tikzpicture}
+  \end{center}
+  \vspace{.35cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.48\textwidth}
+      \begin{block}{Su aportación}
+        \small Combinar información de PC con K2, alternando ambas etapas.
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{alertblock}{Su límite}
+        \small K2 depende del orden obtenido y no garantiza un óptimo global.
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+  \hybridsource{Fuente: Singh y Valtorta (1993)}
+\end{frame}
+
+% 05 / 01:05 — Sparse Candidate.
+% GUION PARA QUIEN PRESENTE: Sparse Candidate cambia un orden global por listas locales de padres y actualiza candidatos iterativamente.
+\begin{frame}[t]{Sparse Candidate (1999): restringir posibles padres}
+  \vspace{.05cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.43\textwidth}
+      \begin{block}{Para cada variable objetivo \(X\)}
+        \vspace{.09cm}
+        \centering
+        \begin{tikzpicture}
+          \node[hybridvertex,minimum size=.66cm] (x) at (1.45,1.00) {X};
+          \node[hybridvertex,minimum size=.56cm] (a) at (0,2.0) {A};
+          \node[hybridvertex,minimum size=.56cm] (b) at (2.9,2.0) {B};
+          \node[hybridvertex,minimum size=.56cm] (c) at (0,0) {C};
+          \node[hybridvertex,minimum size=.56cm] (d) at (2.9,0) {D};
+          \draw[hybridarrow] (a)--(x);
+          \draw[hybridarrow] (b)--(x);
+          \draw[upmgray,dashed,thin] (c)--(x);
+          \draw[upmgray,dashed,thin] (d)--(x);
+        \end{tikzpicture}
+        \par\vspace{.06cm}
+        \scriptsize Azul = candidatos; gris = excluidos. Ejemplo ilustrativo.
+      \end{block}
+    \end{column}
+    \begin{column}{.53\textwidth}
+      \begin{enumerate}\setlength{\itemsep}{9pt}
+        \item \textbf{Seleccionar} un pequeño conjunto de padres candidatos mediante dependencias estadísticas.
+        \item \textbf{Optimizar} el DAG mediante Hill-Climbing con lista tabú sobre esos candidatos.
+        \item \textbf{Repetir}: actualizar candidatos con la estructura aprendida.
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+  \vspace{.13cm}
+  \begin{exampleblock}{Salto frente a CB}
+    \centering La restricción deja de ser principalmente un \textbf{orden global}: pasa a ser una \textbf{lista local de padres posibles}.
+  \end{exampleblock}
+  \hybridsource{Fuente: Friedman et al. (1999)}
+\end{frame}
+
+% 06 / 01:15 — MMHC.
+% GUION PARA QUIEN PRESENTE: MMHC usa MMPC para detectar padres e hijos, luego HC para aprender el DAG sin volver a alternar.
+\begin{frame}[t]{MMHC (2006): separar detección y optimización}
+  \vspace{.09cm}
+  \begin{center}
+    \begin{tikzpicture}[node distance=.6cm]
+      \node[hybridstep,text width=3.6cm,minimum height=1.52cm] (mmpc) {\textbf{1. MMPC}\\[3pt]\small Tests de IC para detectar\\posibles padres e hijos};
+      \node[hybridorange,text width=3.6cm,minimum height=1.52cm,right=of mmpc] (hc) {\textbf{2. Hill-Climbing}\\[3pt]\small Puntúa, selecciona y orienta\\aristas permitidas};
+      \draw[hybridarrow] (mmpc)--(hc);
+      \node[below=.10cm of mmpc,font=\scriptsize,text=upmgray] {Estimación del esqueleto};
+      \node[below=.10cm of hc,font=\scriptsize,text=upmgray] {Construcción de un DAG};
+    \end{tikzpicture}
+  \end{center}
+  \vspace{.58cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.48\textwidth}
+      \begin{block}{Respecto a Sparse Candidate}
+        \small Candidatos locales adaptados a cada variable; \textbf{dos etapas}, sin alternancia iterativa.
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{alertblock}{Dependencia que persiste}
+        \small Si MMPC omite una relación, Hill-Climbing no puede añadirla.
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+  \hybridsource{Fuente: Tsamardinos et al. (2006)}
+\end{frame}
+
+% 07 / 01:00 — Comparación de tres enfoques.
+% GUION PARA QUIEN PRESENTE: La tabla es un recapitulativo, no es necesario leerla entera: enfocar que cambia el tipo de restriccion.
+\begin{frame}[t]{Tres hitos: lo que realmente cambia}
+  \vspace{.10cm}
+  \small
+  \renewcommand{\arraystretch}{1.55}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}p{.18\textwidth}p{.33\textwidth}p{.20\textwidth}p{.22\textwidth}@{}}
+    \toprule
+    \textbf{Método} & \textbf{¿Qué restringe?} & \textbf{Búsqueda} & \textbf{Organización} \\
+    \midrule
+    \textbf{CB} (1993) & Ordenación de variables & K2 & Iterativa \\
+    \textbf{Sparse Candidate} (1999) & Posibles padres por nodo & HC + tabú & Iterativa \\
+    \textbf{MMHC} (2006) & Adyacencias padre--hijo (MMPC) & HC & Dos etapas \\
+    \bottomrule
+  \end{tabular}
+  \vspace{.42cm}
+  \begin{exampleblock}{Hilo histórico}
+    \centering \textbf{De guiar la búsqueda con un orden a delimitar las relaciones candidatas.}\\[4pt]
+    \small A medida que mejora el filtro, resulta más importante saber \emph{qué ocurre cuando falla}.
+  \end{exampleblock}
+  \hybridsource{Fuentes: Singh y Valtorta (1993); Friedman et al. (1999); Tsamardinos et al. (2006)}
+\end{frame}
+
+% 08 / 01:05 — H2PC.
+% GUION PARA QUIEN PRESENTE: H2PC intenta evitar falsos negativos en el filtro MMPC, a cambio de coste computacional.
+\begin{frame}[t]{H2PC (2014): evitar falsos negativos en el filtro}
+  \vspace{.08cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.45\textwidth}
+      \begin{block}{La modificación}
+        \vspace{.06cm}
+        \centering
+        \begin{tikzpicture}[node distance=.38cm]
+          \node[hybridstep,text width=3.7cm,minimum height=.95cm] (mm) {\textbf{MMHC: MMPC}\\\small Candidatos padre--hijo};
+          \node[hybridorange,text width=3.7cm,minimum height=.95cm,below=of mm] (hp) {\textbf{H2PC: HPC}\\\small Recuperación local más sensible};
+          \draw[hybridarrow] (mm)--(hp);
+        \end{tikzpicture}
+      \end{block}
+    \end{column}
+    \begin{column}{.51\textwidth}
+      \begin{itemize}\setlength{\itemsep}{9pt}
+        \item Falso negativo: \textbf{una arista real no pasa el filtro}.
+        \item HPC combina técnicas locales para mejorar la detección.
+        \item La etapa \textit{score-based} sigue buscando con los candidatos.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{.21cm}
+  \begin{alertblock}{El nuevo compromiso}
+    \centering \textbf{Menos aristas reales descartadas} puede implicar \textbf{más tiempo de ejecución}.
+  \end{alertblock}
+  \hybridsource{Fuente: Gasse et al. (2014). Mejora observada frente a MMHC en sus experimentos.}
+\end{frame}
+
+% 09 / 01:05 — ARGES.
+% GUION PARA QUIEN PRESENTE: ARGES flexibiliza las restricciones durante la busqueda por clases de equivalencia, distinto de mejorar el filtro.
+\begin{frame}[t]{ARGES (2018): que las restricciones sean adaptativas}
+  \vspace{.10cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.48\textwidth}
+      \begin{block}{Una búsqueda restringida rígida}
+        \centering\vspace{.15cm}
+        \textcolor{upmblue}{\large\bfseries Esqueleto inicial}\\[10pt]
+        \textcolor{upmorange}{\Large$\Downarrow$}\\[5pt]
+        \small Solo se permiten movimientos compatibles con ese filtro.
+        \vspace{.15cm}
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{block}{ARGES: restricciones adaptativas}
+        \centering\vspace{.15cm}
+        \textcolor{upmblue}{\large\bfseries Filtro inicial}\\[10pt]
+        \textcolor{upmorange}{\Large$\Downarrow$}\\[5pt]
+        \small Admite \textbf{algunas aristas adicionales} según la configuración actual del grafo.
+        \vspace{.15cm}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{.20cm}
+  \begin{exampleblock}{Diferencia respecto a H2PC}
+    \centering H2PC mejora \textbf{qué relaciones detectamos}.\\
+    ARGES modifica \textbf{cómo aplicamos las restricciones} durante la búsqueda.
+  \end{exampleblock}
+  \hybridsource{Fuente: Nandy et al. (2018). Consistencia demostrada bajo supuestos específicos.}
+\end{frame}
+
+% 10 / 01:05 — Alternativas.
+% GUION PARA QUIEN PRESENTE: GFCI invierte el orden y trata posibles latentes; SaiyanH impone conectividad y ese supuesto puede fallar.
+\begin{frame}[t]{Otras formas de combinar ambos paradigmas}
+  \vspace{.08cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.48\textwidth}
+      \begin{block}{GFCI (2016): invertir el orden}
+        \centering \textbf{Score (FGS)} $\longrightarrow$ \textbf{IC / FCI}
+        \vspace{.17cm}
+        \begin{itemize}\setlength{\itemsep}{5pt}
+          \item Empieza con una estructura aprendida por puntuación.
+          \item La refina mediante tests y orientación causal.
+          \item Devuelve un \textbf{PAG}, admite posibles variables latentes.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{block}{SaiyanH (2020): añadir un supuesto}
+        \centering \textbf{Grafo conectado} $\longrightarrow$ \textbf{IC + score}
+        \vspace{.17cm}
+        \begin{itemize}\setlength{\itemsep}{5pt}
+          \item Combina asociaciones, IC y búsqueda HC con tabú.
+          \item Conserva la \textbf{conectividad} del grafo.
+          \item Si el supuesto es falso, puede crear aristas espurias.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{.12cm}
+  \centering\textcolor{upmblue}{\bfseries ``Híbrido'' no significa siempre ``filtrar y después buscar''.}
+  \hybridsource{Fuentes: Ogarrio et al. (2016); Constantinou (2020)}
+\end{frame}
+
+% 11 / 01:00 — Recientes.
+% GUION PARA QUIEN PRESENTE: ESLH intenta abaratar tests y SAPSO intenta explorar mejor que el HC voraz; los resultados son contextuales.
+\begin{frame}[t]{Avances recientes: acelerar el filtro o mejorar la búsqueda}
+  \vspace{.15cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.48\textwidth}
+      \begin{block}{ESLH (2024)}
+        \centering\hybridtag{Coste de las pruebas de IC}
+        \vspace{.13cm}
+        \begin{itemize}\setlength{\itemsep}{6pt}
+          \item Umbrales dinámicos y eliminación de triángulos.
+          \item Aprendizaje más eficiente del esqueleto.
+          \item \textbf{HC en tres etapas} menos sujeto a restricciones rígidas.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{.48\textwidth}
+      \begin{block}{SAPSO (2023)}
+        \centering\hybridtag{Exploración del espacio de DAGs}
+        \vspace{.13cm}
+        \begin{itemize}\setlength{\itemsep}{6pt}
+          \item Información mutua para guiar y restringir.
+          \item Búsqueda poblacional \textbf{PSO} con score BIC.
+          \item Reinicio adaptativo cuando la población se estanca.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{.00cm}
+  \begin{alertblock}{Interpretar bien los resultados}
+    \centering Las mejoras son experimentales y contextuales; \textbf{SAPSO se evaluó en dos redes}.
+  \end{alertblock}
+  \hybridsource{Fuentes: Wang et al. (2024); Liu et al. (2023)}
+\end{frame}
+
+% 12 / 01:10 — Evidencia comparativa.
+% GUION PARA QUIEN PRESENTE: No hay superioridad universal: citar el alcance limitado del estudio comparativo.
+\begin{frame}[t]{¿Son siempre mejores los híbridos? La evidencia dice que no}
+  \vspace{.17cm}
+  \begin{center}
+    \begin{tikzpicture}[node distance=.45cm]
+      \node[hybridstat,text width=2.52cm] (a) {\textbf{14}\\[3pt]\small algoritmos\\comparados};
+      \node[hybridstat,text width=2.52cm,right=of a] (b) {\textbf{5}\\[3pt]\small estructuras\\simuladas};
+      \node[hybridstat,text width=3.12cm,right=of b] (c) {\textbf{MCC, F1, SHD}\\[3pt]\small varias métricas y\\tamaños muestrales};
+    \end{tikzpicture}
+  \end{center}
+  \vspace{.35cm}
+  \begin{alertblock}{Resultado del estudio comparativo de Karadag (2026)}
+    \centering \textbf{Ninguna familia dominó sistemáticamente} en las condiciones estudiadas.\\[4pt]
+    \small MMHC y H2PC no superaron en todos los casos a enfoques puramente \textit{constraint-based}.
+  \end{alertblock}
+  \vspace{.16cm}
+  \centering\small La comparación debe considerar \textbf{topología, muestras, supuestos y métrica}.
+  \hybridsource{Fuente: Karadag (2026). La conclusión solo se refiere a los escenarios evaluados.}
+\end{frame}
+
+% 13 / 00:55 — Cierre.
+% GUION PARA QUIEN PRESENTE: Cerrar resumiendo las tres preguntas clave: que restringir, como buscar y bajo que supuestos.
+\begin{frame}[t]{Conclusiones y líneas futuras del bloque}
+  \vspace{.14cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.315\textwidth}
+      \begin{block}{1. ¿Qué restringir?}
+        \small Evitar falsos negativos con pocos datos; filtrar sin perder relaciones relevantes.\\[4pt]
+        \textcolor{upmcyan}{\bfseries H2PC, ESLH}
+      \end{block}
+    \end{column}
+    \begin{column}{.315\textwidth}
+      \begin{block}{2. ¿Cómo buscar?}
+        \small Explorar mejor DAGs o clases de equivalencia; aplicar restricciones con flexibilidad.\\[4pt]
+        \textcolor{upmcyan}{\bfseries ARGES, SAPSO}
+      \end{block}
+    \end{column}
+    \begin{column}{.315\textwidth}
+      \begin{block}{3. ¿Bajo qué supuestos?}
+        \small Tratar variables latentes y evaluar métodos en escenarios variados.\\[4pt]
+        \textcolor{upmcyan}{\bfseries GFCI, evaluación}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{.27cm}
+  \begin{exampleblock}{Idea para cerrar la sección}
+    \centering \large\textbf{El reto no es simplemente mezclar técnicas: es decidir cómo integrarlas y cuándo convienen.}
+  \end{exampleblock}
+  \hybridsource{Síntesis de la revisión del estado del arte (Kitson et al., 2023, y trabajos citados).}
+\end{frame}
+
 
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Conclusiones}
