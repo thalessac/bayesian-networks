@@ -271,108 +271,423 @@
 \end{frame}
 
 % ===========================================================================
-\section[Pruebas de independencia condicional]{Pruebas de independencia condicional y extensiones causales}
+\section[Pruebas de independencia condicional]{Pruebas de independencia condicional y extensiones para causalidad}
+
+% ===========================================================================
+%  2.2  INTRODUCCIÓN
 % ===========================================================================
 
-% ---------------------------------------------------------------------------
-\begin{frame}[t]{Contrastes de independencia condicional}
+\begin{frame}[t]{Pruebas de IC: el motor estadístico}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.52\textwidth}
+    \begin{column}{0.53\textwidth}
       \begin{itemize}
-        \item \slot{Qué decide un contraste de IC.}
-        \item \slot{Relación con la $d$-separación.}
-        \item \slot{Por qué la elección del contraste importa.}
+        \item Cada decisión de poda u orientación del PC se apoya en
+              contrastes $H_0: I(X,Y\mid\mathbf Z)$.
+        \item Bajo Markov causal y fidelidad:
       \end{itemize}
       \[
-        \slot{\text{ecuación o esquema central}}
+        I(X,Y\mid\mathbf Z)
+        \;\Longleftrightarrow\;
+        X\perp_G Y\mid\mathbf Z.
+      \]
+      \begin{itemize}
+        \item Frente a las funciones de puntuación, que evalúan estructuras
+              completas, la decisión es \alert{local y trazable}: cada arista
+              se justifica con uno o varios contrastes y sus $p$-valores.
+        \item No hay contraste universal: van de los paramétricos clásicos a
+              los no paramétricos, y cada uno impone un modelo de dependencia
+              y paga esa restricción con potencia.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \begin{block}{Por qué importa}
+        La calidad del grafo aprendido queda acotada por la calidad de las
+        decisiones estadísticas.
+      \end{block}
+      \begin{alertblock}{Un contraejemplo}
+        Si $X\sim\mathcal N(0,1)$ e $Y=X^2$:
+        \[
+          \mathrm{corr}(X,Y)=0
+          \quad\text{pero}\quad
+          \neg I(X,Y).
+        \]
+        La correlación parcial no la detecta.
+      \end{alertblock}
+      {\scriptsize\color{upmgray}Cuatro bloques de contrastes: parcial,
+      tablas, regresión/GCM y no paramétricos (kernel y kNN).}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ===========================================================================
+%  2.2.1  CORRELACIÓN PARCIAL
+% ===========================================================================
+\subsection{Correlación parcial}
+
+\begin{frame}[t]{Correlación parcial: el contraste gaussiano}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.55\textwidth}
+      \begin{itemize}
+        \item Datos continuos con normalidad conjunta.
+        \item $I(X,Y\mid\mathbf Z)$ equivale a que la correlación parcial
+              $\rho_{XY\cdot\mathbf Z}$ se anule.
+        \item Se estima la covarianza muestral $S$ de $(X,Y,\mathbf Z)$ y se
+              invierte: $\hat K=S^{-1}$.
+      \end{itemize}
+      \[
+        \hat\rho_{XY\cdot\mathbf Z}
+        =\frac{-\hat K_{XY}}{\sqrt{\hat K_{XX}\hat K_{YY}}}.
+      \]
+      \begin{itemize}
+        \item La transformada $z$ de Fisher convierte la correlación en un
+              estadístico aproximadamente normal.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \begin{block}{Contraste}
+        \[
+          z(r)=\tfrac12\ln\frac{1+r}{1-r},
+        \]
+        \[
+          T=\sqrt{n-|\mathbf Z|-3}\;z(\hat\rho).
+        \]
+        Se rechaza $H_0$ si $|T|>z_{1-\alpha/2}$.
+      \end{block}
+      \begin{exampleblock}{Coste}
+        $\mathcal O(|\mathbf Z|^3)$ por contraste, con $p$-valores
+        analíticos.
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{Correlación parcial: ventajas y limitaciones}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Ventajas}
+        \begin{itemize}
+          \item Coste bajo: invertir el bloque de covarianzas.
+          \item $p$-valores analíticos, sin remuestreo.
+          \item Implementación de referencia en \texttt{pcalg} y
+                \texttt{bnlearn}.
+          \item Sostiene la consistencia del PC en alta dimensión con grafos
+                dispersos.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{alertblock}{Limitaciones}
+        \begin{itemize}
+          \item Solo es válido bajo normalidad y linealidad.
+          \item Fuera de ese modelo, las versiones de rango solo aproximan.
+          \item Correlación nula no implica independencia en general.
+          \item En muestras pequeñas, la aproximación asintótica del
+                $p$-valor puede ser pobre.
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+  \vspace{0.2cm}
+  \begin{exampleblock}{Líneas recientes}
+    WLS para varianza no constante; correlaciones de rango y cópulas para
+    no normalidad; permutaciones para calibrar en muestra pequeña.
+  \end{exampleblock}
+\end{frame}
+
+% ===========================================================================
+%  2.2.2  TABLAS DE CONTINGENCIA
+% ===========================================================================
+\subsection{Tablas de contingencia}
+
+\begin{frame}[t]{Tablas de contingencia: el contraste discreto}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.57\textwidth}
+      \begin{itemize}
+        \item Datos discretos o categóricos: se comparan los conteos observados
+              con los esperados bajo independencia.
+        \item $n_{ijk}$: observaciones con $X=i$, $Y=j$ y $\mathbf Z=k$.
+      \end{itemize}
+      \begin{block}{Estadísticos}
+        \[
+          E_{ijk}=\frac{n_{i\cdot k}\,n_{\cdot jk}}{n_{\cdot\cdot k}},
+        \]
+        \[
+          \chi^2=\sum_{i,j,k}\frac{(n_{ijk}-E_{ijk})^2}{E_{ijk}},
+        \]
+        \[
+          G^2=2\sum_{i,j,k} n_{ijk}\ln\frac{n_{ijk}}{E_{ijk}}.
+        \]
+      \end{block}
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \begin{block}{Distribución nula}
+        \[
+          \nu=(I-1)(J-1)\prod_l K_l
+        \]
+        Se rechaza $H_0$ si el estadístico supera
+        $\chi^2_{\nu,1-\alpha}$.
+      \end{block}
+      \begin{exampleblock}{Lectura}
+        $G^2=2n\,\hat I(X,Y\mid\mathbf Z)$: versión discreta del contraste de
+        razón de verosimilitudes, dentro de la familia de información mutua.
+      \end{exampleblock}
+      {\scriptsize\color{upmgray}Ordinales: tendencia de Jonckheere--Terpstra.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{Tablas de contingencia: ventajas y limitaciones}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Ventajas}
+        \begin{itemize}
+          \item Contraste canónico para datos categóricos.
+          \item $p$-valores analíticos.
+          \item Lectura directa como divergencia entre la tabla observada y la
+                esperada.
+          \item En las simulaciones originales del PC, $G^2$ acertó el grafo
+                más veces que $\chi^2$.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{alertblock}{Limitaciones}
+        \begin{itemize}
+          \item Celdas $I\cdot J\cdot\prod_l K_l$: crecimiento exponencial con
+                $|\mathbf Z|$ y la cardinalidad.
+          \item Con pocas observaciones por celda, la aproximación $\chi^2$
+                deja de ser fiable.
+          \item Regla práctica: $n\ge 5\times$ número de celdas.
+          \item El coste es lineal en celdas, pero las celdas son el cuello de
+                botella.
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+  \vspace{0.1cm}
+  \begin{exampleblock}{Líneas recientes}
+    Tablas suavizadas (Dash et al., 2003); SECMI (Kubkowski et al., 2021);
+    permutaciones.
+  \end{exampleblock}
+\end{frame}
+
+% ===========================================================================
+%  2.2.3  REGRESIÓN Y RESIDUOS
+% ===========================================================================
+\subsection{Regresión y métodos de residuos}
+
+\begin{frame}[t]{Regresión y residuos: el contraste GCM}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.53\textwidth}
+      \begin{itemize}
+        \item Datos mixtos: no se modela directamente la dependencia, sino que
+              se elimina el efecto de $\mathbf Z$.
+        \item La versión general es la \alert{medida de covarianza
+              generalizada (GCM)} de Shah \& Peters (2020).
+        \item Se ajustan $\hat m_X(\mathbf z)$ y $\hat m_Y(\mathbf z)$ y se
+              toman los residuos
+              $r_i=x_i-\hat m_X(\mathbf z_i)$ y
+              $s_i=y_i-\hat m_Y(\mathbf z_i)$.
+        \item Bajo independencia, los productos $R_i=r_i s_i$ tienen media
+              cero.
+      \end{itemize}
+      \[
+        T_n=\frac{\sqrt n\,\bar R}{\hat\sigma_R},
+        \qquad
+        \hat\sigma_R^2=\frac1n\sum_{i=1}^n(R_i-\bar R)^2.
       \]
     \end{column}
-    \begin{column}{0.45\textwidth}
-      \begin{block}{Mensaje}
-        \slot{No hay un contraste universal: cada uno asume un modelo de
-        dependencia.}
+    \begin{column}{0.44\textwidth}
+      \begin{block}{Distribución nula}
+        $T_n\longrightarrow\mathcal N(0,1)$ si el producto de los errores
+        cuadráticos medios de ambas regresiones es $o(n^{-1})$.
       \end{block}
-      \begin{alertblock}{Cuidado}
-        \slot{Limitación o contraejemplo que conviene destacar.}
+      \begin{exampleblock}{Caso lineal-gaussiano}
+        El contraste coincide, salvo normalización, con la correlación parcial
+        de Fisher.
+      \end{exampleblock}
+      \begin{alertblock}{Idea}
+        No fija la forma de la dependencia, sino la de las medias
+        condicionales.
       \end{alertblock}
     \end{column}
   \end{columns}
 \end{frame}
 
-% ---------------------------------------------------------------------------
-\begin{frame}[t]{Familias de contrastes}
+\begin{frame}[t]{Regresión y residuos: ventajas y limitaciones}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{block}{Correlación parcial}
-        \slot{Datos continuos}
-      \end{block}
-      \begin{block}{Tablas de contingencia}
-        \slot{Datos discretos}
-      \end{block}
-      \begin{block}{Regresión / GCM}
-        \slot{Datos mixtos}
+      \begin{block}{Ventajas}
+        \begin{itemize}
+          \item Flexible: lineal, GLM, bosques y kernels; admite datos mixtos.
+          \item Cubre parte de la no linealidad.
+          \item WGCM pondera por la varianza; el doble ML evita el sobreajuste.
+        \end{itemize}
       \end{block}
     \end{column}
     \begin{column}{0.49\textwidth}
-      \begin{block}{Kernel: HSIC / KCI}
-        \slot{Dependencias no lineales}
+      \begin{alertblock}{Limitaciones}
+        \begin{itemize}
+          \item Las regresiones no son neutrales: solo detectan alternativas
+                con covarianza residual.
+          \item Sin restringir la clase nula, ningún contraste con nivel
+                uniforme tiene potencia (Shah \& Peters, 2020).
+          \item Elegir las regresiones exige conocer el problema; su coste
+                puede ser alto.
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+  \begin{exampleblock}{Líneas recientes}
+    WGCM amplía las alternativas a costa de potencia; el doble ML permite
+    regresiones flexibles y calibradas.
+  \end{exampleblock}
+\end{frame}
+
+% ===========================================================================
+%  2.2.4  MÉTODOS NO PARAMÉTRICOS
+% ===========================================================================
+\subsection{Métodos no paramétricos}
+
+\begin{frame}[t]{Kernel y vecinos: contrastes no paramétricos}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Kernel: HSIC y KCI}
+        \begin{itemize}
+          \item HSIC: dos variables son independientes si y solo si ninguna
+                función de una covaría con ninguna función de la otra.
+          \item KCI elimina $\mathbf Z$ por regresión no paramétrica y aplica
+                una medida tipo HSIC a los residuos.
+          \item Nulo por Monte Carlo o aproximación gamma.
+        \end{itemize}
+        \[
+          \mathrm{HSIC}(X,Y)=0\iff X\perp Y.
+        \]
       \end{block}
+    \end{column}
+    \begin{column}{0.49\textwidth}
       \begin{block}{Vecinos más cercanos}
-        \slot{CMI y permutaciones}
-      \end{block}
-      \begin{block}{Machine learning}
-        \slot{Alternativas flexibles}
+        \begin{itemize}
+          \item La información mutua condicional se estima con un estimador
+                de $k$ vecinos.
+          \item El contraste se calibra con permutaciones locales.
+          \item RCIT/RCoT sustituyen los kernels por características de
+                Fourier aleatorias y pasan a coste lineal.
+        \end{itemize}
       \end{block}
     \end{column}
   \end{columns}
+  \vspace{-2pt}
+  {\small
+  \begin{alertblock}{Idea común}
+    No se fija la forma de la dependencia ni la de las medias condicionales.
+  \end{alertblock}}
 \end{frame}
 
-% ---------------------------------------------------------------------------
-\begin{frame}[t]{Selección del contraste}
-  \small
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabular}{@{}p{0.30\textwidth}p{0.38\textwidth}p{0.26\textwidth}@{}}
-    \toprule
-    \textbf{Situación} & \textbf{Contraste} & \textbf{Coste} \\
-    \midrule
-    \slot{Datos continuos} & \slot{Opción 1} & \slot{Coste} \\
-    \addlinespace
-    \slot{Datos discretos} & \slot{Opción 2} & \slot{Coste} \\
-    \addlinespace
-    \slot{Datos mixtos} & \slot{Opción 3} & \slot{Coste} \\
-    \bottomrule
-  \end{tabular}
-  \vspace{0.3cm}
-  \begin{alertblock}{Regla práctica}
-    \slot{Recomendación que cierra la sección.}
-  \end{alertblock}
-\end{frame}
-
-% ---------------------------------------------------------------------------
-\begin{frame}[t]{De la independencia a la causalidad}
+\begin{frame}[t]{Métodos no paramétricos: ventajas y limitaciones}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{block}{Encadenar contrastes}
+      \begin{block}{Ventajas}
         \begin{itemize}
-          \item \slot{Error de búsqueda}
-          \item \slot{Propagación}
+          \item No asumen forma funcional.
+          \item Captan dependencias no lineales.
+          \item Con densidades no suaves, los vecinos superan en potencia a
+                los métodos de kernel.
+          \item Los de kernel mitigan la maldición de la dimensionalidad;
+                RCIT/RCoT escalan a muestras grandes.
         \end{itemize}
       \end{block}
     \end{column}
     \begin{column}{0.49\textwidth}
-      \begin{block}{Extensiones}
+      \begin{alertblock}{Limitaciones}
         \begin{itemize}
-          \item \slot{Ciclos}
-          \item \slot{Variables latentes}
-          \item \slot{Datos heterogéneos o temporales}
+          \item KCI es $\mathcal O(n^2)$ o peor: inviable en muestras grandes.
+          \item La distribución nula analítica no está bien calibrada por
+                debajo de $\sim 1000$ muestras.
+          \item Las permutaciones mejoran la calibración a costa de potencia.
         \end{itemize}
-      \end{block}
+      \end{alertblock}
     \end{column}
   \end{columns}
   \vspace{0.2cm}
-  \begin{alertblock}{Transición}
-    \slot{Por qué esta fragilidad motiva los métodos híbridos.}
-  \end{alertblock}
+  \begin{exampleblock}{Líneas recientes}
+    Contrastes \emph{distribution-free} cuyo índice se anula si y solo si hay
+    independencia; permutaciones aprendidas para estimar mejor el nulo.
+  \end{exampleblock}
+\end{frame}
+
+% ===========================================================================
+%  2.2.5  EXTENSIONES PARA CAUSALIDAD
+% ===========================================================================
+\subsection{Extensiones para causalidad}
+
+\begin{frame}[t]{De la independencia a la causalidad}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.47\textwidth}
+      \begin{block}{El problema de encadenar contrastes}
+        \begin{itemize}
+          \item Ni $\alpha$ ni la potencia miden el error de la búsqueda, que
+                depende del número de contrastes y de la estructura recorrida.
+          \item Una eliminación errónea inhibe contrastes posteriores y
+                arrastra esqueleto y orientación.
+          \item La consistencia exige $\alpha_n\to 0$ con $n$.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \begin{block}{Nuevos criterios de separación}
+        \begin{itemize}
+          \item \textbf{$\sigma$-separación}: mecanismos no lineales y ciclos.
+          \item \textbf{$m$-separación} en MAG/PAG: variables latentes y sesgo
+                de selección (FCI).
+        \end{itemize}
+      \end{block}
+      \begin{block}{Nuevos escenarios}
+        \begin{itemize}
+          \item \textbf{COmbINE}: unifica datos observacionales e
+                intervencionales parcialmente solapados.
+          \item \textbf{CTBN}: contrastes para trayectorias continuas; explotan
+                la asimetría del tiempo.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{0.1cm}
+  {\scriptsize\color{upmgray}Forré \& Mooij (2018); Richardson \& Spirtes
+  (2002); Triantafillou \& Tsamardinos (2015); Villa \& Stella (2016).}
+\end{frame}
+
+\begin{frame}[t]{Extensiones causales: alcance y límites}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Ventajas}
+        \begin{itemize}
+          \item Dotan a los contrastes de semántica causal plena.
+          \item Cubren ciclos, latentes y sesgo de selección.
+          \item Integran datos heterogéneos y temporales.
+          \item FCI/RFCI y COmbINE amplían el marco sin abandonar las
+                restricciones.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{alertblock}{Limitaciones}
+        \begin{itemize}
+          \item La vulnerabilidad al encadenamiento en muestra finita
+                permanece intacta.
+          \item Un solo error estadístico altera los conjuntos de
+                condicionamiento posteriores.
+          \item Las garantías son asintóticas.
+          \item Cada extensión añade supuestos y requisitos de datos.
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+  \vspace{0.2cm}
+  \begin{exampleblock}{Cierre de la sección}
+    Esta fragilidad estructural es la motivación central de los enfoques
+    híbridos de la sección~3.
+  \end{exampleblock}
 \end{frame}
 
 % ============================================================================
@@ -901,6 +1216,42 @@
     \item \slot{Figura de decisión sobre contrastes}
     \item \slot{Detalles que no caben en el cuerpo principal}
   \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{Anexo: cuándo elegir cada contraste}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{1.10}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.21\textwidth}
+                     >{\raggedright\arraybackslash}p{0.45\textwidth}
+                     >{\raggedright\arraybackslash}p{0.27\textwidth}@{}}
+    \toprule
+    \textbf{Modelo} & \textbf{Cuándo usarlo} & \textbf{Coste y límite} \\
+    \midrule
+    Lineal-gaussiano
+      & continuas, normalidad conjunta, linealidad; $n$ grande y
+        $|\mathbf Z|$ moderado
+      & $\mathcal O(|\mathbf Z|^3)$, $p$ analítico; ciego a $Y=X^2$ \\
+    \addlinespace
+    Medias condicionales
+      & continuas o mixtas; media condicional especificable (GLM, doble ML)
+      & 2 regresiones $+\,\mathcal O(n)$; WGCM si la varianza del error no es constante \\
+    \addlinespace
+    Sin forma funcional
+      & no lineal o error con varianza no constante; $n$ y $|\mathbf Z|$ moderados
+      & KCI $\mathcal O(n^3)$; RCIT/RCoT $\mathcal O(n)$; frágil si $n<1000$ \\
+    \addlinespace
+    Tabla de contingencia
+      & categóricas; conteos por celda suficientes; $|\mathbf Z|$ bajo
+      & $\chi^2/G^2$ analítico; SECMI si $|\mathbf Z|$ grande \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.1cm}
+  \begin{alertblock}{GCM frente a KCI}
+    GCM si la dependencia pasa por la media condicional y el regresor es
+    fiable; KCI si no quieres imponer esa forma y asumes su coste.
+  \end{alertblock}
 \end{frame}
 
 \end{document}
