@@ -1,0 +1,108 @@
+% ---------------------------------------------------------------------------
+%  Árbol de decisión para elegir el contraste de independencia condicional
+%  Columnas: tipo de dato. Pregunta: supuesto que se puede asumir.
+%  Hojas: contraste recomendado (rama Sí) y alternativa (rama No).
+%  Compilar con pdflatex -> ci_tests_decision.pdf
+% ---------------------------------------------------------------------------
+\documentclass[tikz,border=6pt]{standalone}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[spanish,es-noshorthands]{babel}
+\usetikzlibrary{arrows.meta,positioning,calc}
+
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+
+\definecolor{cPartial}{named}{RoyalBlue}
+\definecolor{cTable}{named}{ForestGreen}
+\definecolor{cRegr}{named}{BrickRed}
+\definecolor{cKernel}{named}{Violet}
+
+\tikzset{
+  root/.style={
+    draw=black!65, fill=black!4, rounded corners=3pt, align=center,
+    inner sep=6pt, text width=15.2cm, minimum height=0.9cm, font=\small\bfseries
+  },
+  head/.style={
+    draw=#1!70, fill=#1!16, rounded corners=3pt, align=center,
+    text width=4.5cm, minimum height=0.8cm, inner sep=3pt, font=\footnotesize\bfseries
+  },
+  question/.style={
+    draw=black!55, fill=white, rounded corners=2.5pt, align=center,
+    text width=4.3cm, minimum height=1.0cm, inner sep=3.5pt, font=\scriptsize
+  },
+  leaf/.style={
+    draw=#1!75, fill=#1!7, rounded corners=2.5pt, align=center,
+    text width=4.3cm, minimum height=1.0cm, inner sep=3.5pt, font=\footnotesize\bfseries
+  },
+  ans/.style={-{Latex[length=1.4mm]}, draw=black!55, line width=0.6pt},
+  lbl/.style={font=\scriptsize\bfseries, inner sep=1.5pt, fill=white}
+}
+
+\begin{document}
+\begin{tikzpicture}
+
+% =====================================================================
+%  Pregunta raíz
+% =====================================================================
+\node[root] (root) at (0,0) {%
+  ¿Qué contraste de independencia condicional elijo?\\[1pt]
+  {\scriptsize\mdseries tipo de dato, supuesto sobre la dependencia y tamaño muestral}};
+
+% =====================================================================
+%  Columna 1: variables continuas
+% =====================================================================
+\node[head=cPartial] (hA) at (-5.4,-1.8) {Continuas};
+\node[question]      (qA) at (-5.4,-3.3) {¿Dependencia lineal y datos\\aproximadamente gaussianos?};
+
+\node[leaf=cPartial] (yA) at (-5.4,-4.9) {Correlación parcial (Fisher $z$)};
+\node[leaf=cKernel]  (nA) at (-5.4,-6.5) {KCI (HSIC) o GCM};
+
+\draw[ans] (root.south) -- (hA.north);
+\draw[ans] (qA.south) -- (yA.north);
+\node[lbl] at (-5.55,-4.1) {Sí};
+
+\draw[ans, rounded corners=4pt]
+  (qA.east) -- (-3.0,-3.3) -- (-3.0,-6.5) -- (nA.east);
+\node[lbl, anchor=west] at (-2.9,-5.9) {No};
+
+% =====================================================================
+%  Columna 2: variables categóricas u ordinales
+% =====================================================================
+\node[head=cTable] (hB) at (0,-1.8) {Categóricas u ordinales};
+\node[question]    (qB) at (0,-3.3) {¿$n \ge 5$ veces el\\número de celdas?};
+
+\node[leaf=cTable] (yB) at (0,-4.9) {$G^2$ (o $\chi^2$)};
+\node[leaf=cTable] (nB) at (0,-6.5) {Tabla suavizada o SECMI};
+
+\draw[ans] (root.south) -- (hB.north);
+\draw[ans] (qB.south) -- (yB.north);
+\node[lbl] at (-0.15,-4.1) {Sí};
+
+\draw[ans, rounded corners=4pt]
+  (qB.east) -- (2.4,-3.3) -- (2.4,-6.5) -- (nB.east);
+\node[lbl, anchor=west] at (2.5,-5.9) {No};
+
+% =====================================================================
+%  Columna 3: datos mixtos
+% =====================================================================
+\node[head=cRegr] (hC) at (5.4,-1.8) {Mixtas};
+\node[question]    (qC) at (5.4,-3.3) {¿Medias condicionales\\modelables con GLM?};
+
+\node[leaf=cRegr] (yC) at (5.4,-4.9) {GCM (o WGCM)};
+\node[leaf=cKernel] (nC) at (5.4,-6.5) {KCI / RCIT o kNN-CMI};
+
+\draw[ans] (root.south) -- (hC.north);
+\draw[ans] (qC.south) -- (yC.north);
+\node[lbl] at (5.25,-4.1) {Sí};
+
+\draw[ans, rounded corners=4pt]
+  (qC.east) -- (7.8,-3.3) -- (7.8,-6.5) -- (nC.east);
+\node[lbl, anchor=west] at (7.9,-5.9) {No};
+
+\end{tikzpicture}
+\end{document}

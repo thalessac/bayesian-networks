@@ -64,28 +64,30 @@
     year      = {2000}
 }
 
-@misc{Averin2026Survey,
-    author       = {Averin, Pavel and Moysiadis, Theodoros and Katakis, Ioannis},
-    title        = {Conditional Independence Tests for Constraint-Based Causal Discovery: A Survey},
-    year         = {2026},
-    howpublished = {arXiv preprint arXiv:2608.11156}
+@article{Averin2026Survey,
+    author  = {Averin, Pavel and Moysiadis, Theodoros and Katakis, Ioannis},
+    title   = {Conditional Independence Tests for Constraint-Based Causal Discovery: A Survey},
+    journal = {Transactions on Machine Learning Research},
+    year    = {2026},
+    note    = {arXiv:2608.11156}
 }
 
 @article{Amendola2026PCstar,
     author  = {Améndola, Carlos and Hollering, Benjamin and Nowell, Francesco},
     title   = {A {PC} Algorithm for Max-Linear {B}ayesian Networks},
     journal = {Journal of Computational and Graphical Statistics},
+    pages   = {1--12},
     year    = {2026},
     doi     = {10.1080/10618600.2026.2673046}
 }
 
-@article{Claassen2012BCCD,
-    author  = {Claassen, Tom and Heskes, Tom},
-    title   = {A Bayesian approach to causal discovery from observational data},
-    journal = {Journal of Machine Learning Research},
-    volume  = {13},
-    pages   = {1927--1953},
-    year    = {2012}
+@inproceedings{Claassen2012BCCD,
+    author    = {Claassen, Tom and Heskes, Tom},
+    title     = {A {B}ayesian Approach to Constraint Based Causal Inference},
+    booktitle = {Proceedings of the 28th Conference on Uncertainty in Artificial Intelligence (UAI)},
+    pages     = {207--216},
+    publisher = {AUAI Press},
+    year      = {2012}
 }
 
 @article{kalisch2007estimating,
@@ -114,8 +116,9 @@
     journal = {IEEE/ACM Transactions on Computational Biology and Bioinformatics},
     volume  = {16},
     number  = {5},
-    pages   = {1483--1494},
+    pages   = {1483--1495},
     year    = {2019},
+    note    = {Publicado en línea en 2016},
     doi     = {10.1109/TCBB.2016.2591526}
 }
 
@@ -124,8 +127,8 @@
     title   = {Consistent Causal Inference from Time Series with {PC} Algorithm and Its Time-Aware Extension},
     journal = {Statistics and Computing},
     volume  = {34},
-    number  = {14},
-    pages   = {1--21},
+    number  = {1},
+    pages   = {14},
     year    = {2024},
     doi     = {10.1007/s11222-023-10330-3}
 }
@@ -181,7 +184,7 @@
 	publisher={Institute of Mathematical Statistics},
 	author={Shah, Rajen D. and Peters, Jonas},
 	year={2020},
-	pages={1514–1538} }
+	pages={1514--1538} }
 
 @book{lauritzen1996graphical,
 	author    = {Lauritzen, Steffen L.},
@@ -244,7 +247,7 @@
 	url={https://arxiv.org/abs/1207.0242}, 
 }
 
-@article{gunther2022conditional,
+@inproceedings{gunther2022conditional,
 	title={Conditional independence testing with heteroskedastic data and applications to causal discovery},
 	author={Günther, Wiebke and Ninad, Urmi and Wahl, Jonas and Runge, Jakob},
 	journal={Advances in Neural Information Processing Systems},
@@ -305,7 +308,7 @@
 }
 
 @article{terpstra1952asymptotic,
-	title={The asymptotic normality and consistency of Kendall’s test against trend, when ties are present in one ranking},
+	title={The asymptotic normality and consistency of {Kendall's} test against trend, when ties are present in one ranking},
 	author={Terpstra, Teunis J},
 	journal={Indagationes Mathematicae},
 	volume={14},
@@ -314,10 +317,13 @@
 	year={1952}
 }
 
-@article{dash2003robust,
+@inproceedings{dash2003robust,
 	title={Robust independence testing for constraint-based learning of causal structure},
 	author={Dash, Denver},
-	year={2003}
+	booktitle={Proceedings of the 19th Conference on Uncertainty in Artificial Intelligence (UAI)},
+	pages={167--174},
+	year={2003},
+	publisher={Morgan Kaufmann}
 }
 
 @article{kubkowski2021gain,
@@ -362,10 +368,11 @@
 
 @inproceedings{zhang2011kci,
 	title = {Kernel-based Conditional Independence Test and Application in Causal Discovery},
-	pages = {804-813},
+	author = {Zhang, Kun and Peters, Jonas and Janzing, Dominik and Sch{\"o}lkopf, Bernhard},
+	booktitle = {Proceedings of the 27th Conference on Uncertainty in Artificial Intelligence (UAI)},
+	pages = {804--813},
 	publisher = {AUAI Press},
-	year = {2011},
-	author = {Zhang, K. and Peters, J. and Janzing, D. and Scholkopf, B.}
+	year = {2011}
 }
 
 @inproceedings{runge2018conditional,
@@ -406,11 +413,14 @@
 	year={2014}
 }
 
-@article{forre2018constraint,
+@misc{forre2018constraint,
 	title={Constraint-based causal discovery for non-linear structural causal models with cycles and latent confounders},
-	author={Forré, Patrick and Mooij, Joris M},
-	journal={arXiv preprint arXiv:1807.03024},
-	year={2018}
+	author={Forré, Patrick and Mooij, Joris M.},
+	year={2018},
+	eprint={1807.03024},
+	archivePrefix={arXiv},
+	primaryClass={stat.ME},
+	howpublished={arXiv preprint}
 }
 
 @article{richardson2002ancestral,
@@ -544,4 +554,97 @@
     number  = {1},
     pages   = {31--78},
     year    = {2006}
+}
+
+@inproceedings{SINGH1993259,
+  title = {An Algorithm for the Construction of {Bayesian} Network Structures from Data},
+  author = {Singh, Moninder and Valtorta, Marco},
+  booktitle = {Proceedings of the Ninth Conference on Uncertainty in Artificial Intelligence (UAI)},
+  pages = {259--265},
+  publisher = {Morgan Kaufmann},
+  year = {1993},
+  doi = {10.1016/B978-1-4832-1451-1.50036-6}
+}
+
+@inproceedings{Friedman1999SparseCandidate,
+  title = {Learning {Bayesian} Network Structure from Massive Datasets: The Sparse Candidate Algorithm},
+  author = {Friedman, Nir and Nachman, Iftach and Pe'er, Dana},
+  booktitle = {Proceedings of the Fifteenth Conference on Uncertainty in Artificial Intelligence (UAI)},
+  pages = {206--215},
+  publisher = {Morgan Kaufmann},
+  year = {1999}
+}
+
+@article{Gasse2014H2PC,
+  title = {A Hybrid Algorithm for {Bayesian} Network Structure Learning with Application to Multi-label Learning},
+  author = {Gasse, Maxime and Aussem, Alex and Elghazel, Haytham},
+  journal = {Expert Systems with Applications},
+  volume = {41},
+  number = {15},
+  pages = {6755--6772},
+  year = {2014},
+  doi = {10.1016/j.eswa.2014.04.032}
+}
+
+@article{Nandy2018ARGES,
+  title = {High-Dimensional Consistency in Score-Based and Hybrid Structure Learning},
+  author = {Nandy, Preetam and Hauser, Alain and Maathuis, Marloes H.},
+  journal = {The Annals of Statistics},
+  volume = {46},
+  number = {6A},
+  pages = {3151--3183},
+  year = {2018},
+  doi = {10.1214/17-AOS1654}
+}
+
+@inproceedings{Ogarrio2016GFCI,
+  title = {A Hybrid Causal Search Algorithm for Latent Variable Models},
+  author = {Ogarrio, Juan Miguel and Spirtes, Peter and Ramsey, Joe},
+  booktitle = {Proceedings of the Eighth International Conference on Probabilistic Graphical Models},
+  pages = {368--379},
+  publisher = {PMLR},
+  year = {2016},
+  url = {https://proceedings.mlr.press/v52/ogarrio16.html}
+}
+
+@article{Constantinou2020SaiyanH,
+  title = {Learning {Bayesian} Networks That Enable Full Propagation of Evidence},
+  author = {Constantinou, Anthony C.},
+  journal = {IEEE Access},
+  volume = {8},
+  pages = {124845--124856},
+  year = {2020},
+  doi = {10.1109/ACCESS.2020.3006472}
+}
+
+@article{Wang2024ESLH,
+  title = {An Efficient Skeleton Learning Approach-Based Hybrid Algorithm for Identifying {Bayesian} Network Structure},
+  author = {Wang, Niantai and Liu, Haoran and Zhang, Liyue and Cai, Yanbin and Shi, Qianrui},
+  journal = {Engineering Applications of Artificial Intelligence},
+  volume = {133},
+  pages = {108105},
+  year = {2024},
+  doi = {10.1016/j.engappai.2024.108105}
+}
+
+@article{Liu2023SAPSO,
+  title = {Self-Awakened Particle Swarm Optimization {BN} Structure Learning Algorithm Based on Search Space Constraint},
+  author = {Liu, Kun and Li, Peiran and Zhang, Yu and Ren, Jia and Wang, Xianyu and Bhatti, Uzair Aslam},
+  journal = {Computers, Materials \& Continua},
+  volume = {76},
+  number = {3},
+  pages = {3257--3274},
+  year = {2023},
+  doi = {10.32604/cmc.2023.039430}
+}
+
+@article{Karadag2026Evaluation,
+  title = {Performance Evaluation of {Bayesian} Network Learning Algorithms in Structural Equation Modeling: A Simulation Study},
+  author = {Karadag, Tugay},
+  journal = {Entropy},
+  volume = {28},
+  number = {9},
+  pages = {955},
+  year = {2026},
+  doi = {10.3390/e28090955}
 }
