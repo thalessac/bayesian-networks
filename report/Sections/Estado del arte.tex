@@ -52,12 +52,13 @@ Todas las variantes anteriores conservan decisiones binarias e irrevocables en c
 
 La Tabla~\ref{tab:variantes_pc}, en el Apéndice~\ref{app:variantes_pc}, resume estas variantes según la limitación que abordan.
 
+\clearpage
 \subsection{Pruebas de Independencia Condicional y Extensiones para Causalidad}
 \label{sec:pruebas_ic}
 
-Las pruebas de independencia condicional (IC) constituyen el motor estadístico del aprendizaje estructural basado en restricciones, pues cada decisión de poda y de orientación del esqueleto del grafo se reduce a determinar si dos variables son dependientes o independientes dado un conjunto de condicionamiento \citep{spirtes2000causation, Averin2026Survey}. A diferencia de las funciones de puntuación (score), que evalúan estructuras completas, el contraste IC es una decisión local y contrastable individualmente, lo que explica la interpretabilidad característica de los métodos \emph{constraint-based}, en los que cada arista eliminada o conservada puede rastrearse hasta un conjunto de contrastes estadísticos concreto y sus p-valores \citep{Averin2026Survey, spirtes2000causation}
+Las pruebas de independencia condicional (IC) constituyen el motor estadístico del aprendizaje estructural basado en restricciones, pues cada decisión de poda y de orientación del esqueleto del grafo se reduce a determinar si dos variables son dependientes o independientes dado un conjunto de condicionamiento \citep{spirtes2000causation, Averin2026Survey}. A diferencia de las funciones de puntuación (score), que evalúan estructuras completas, el contraste IC es una decisión local y contrastable individualmente, lo que explica la interpretabilidad característica de los métodos \emph{constraint-based}, en los que cada arista eliminada o conservada puede rastrearse hasta un conjunto de contrastes estadísticos concreto y sus p-valores \citep{Averin2026Survey, spirtes2000causation}. La Figura~\ref{fig:ci_decision} resume el criterio de elección entre las familias de contrastes que se describen a continuación.
 
-\begin{figure}[t]
+\begin{figure}[!b]
   \centering
   \includegraphics[width=\textwidth]{Figures/ci_tests_decision.pdf}
   \caption{Guía para elegir el contraste de independencia condicional según el tipo de dato, el supuesto sobre la dependencia y el tamaño muestral. La rama \emph{Sí} conduce al contraste recomendado y la rama \emph{No} a su alternativa.}
@@ -233,8 +234,6 @@ La primera dirección de avance generaliza los criterios topológicos que vincul
 La segunda dirección flexibiliza los supuestos sobre el origen y la naturaleza de las observaciones. Para resolver la integración de conjuntos de datos heterogéneos, marcos como COmbINE \citep{triantafillou2015constraint} extienden los contrastes de independencia condicionando sobre variables indicadoras de contexto. Esto permite unificar experimentos observacionales e intervencionales parcialmente solapados para inferir estructuras globales inidentificables de forma aislada. En el dominio dinámico, \citet{villa2016learning} formularon pruebas de independencia condicional específicas para trayectorias continuas en Redes Bayesianas de Tiempo Continuo (CTBN), logrando orientar transiciones causales explotando matemáticamente la asimetría estricta del tiempo físico.
 
 En síntesis, estas extensiones dotan a las pruebas de independencia de semántica causal plena frente a ciclos, latentes y temporalidad. Sin embargo, la vulnerabilidad inherente al encadenamiento de contrastes locales en muestras finitas, donde un solo error estadístico altera irremediablemente los conjuntos de condicionamiento posteriores, permanece intacta. Esta fragilidad estructural para propagar errores constituye la motivación central de los enfoques híbridos explorados a continuación, que buscan reconciliar la alta expresividad causal de las restricciones topológicas con la robustez de la optimización global basada en puntuación.
-
-Como cierre de la subsección, la Figura~\ref{fig:ci_decision} organiza la elección del contraste en forma de árbol de decisión. El tipo de dato fija la rama, el supuesto sobre la dependencia y el tamaño muestral determinan la hoja, y cada hoja remite al contraste recomendado junto con su alternativa. Las correcciones y variantes de cada familia (WLS, WGCM, RCIT/RCoT, kNN-CMI, SECMI o la tabla suavizada) se han discutido en los apartados precedentes y no se repiten aquí.
 
 \subsection{Enfoques híbridos de aprendizaje estructural y líneas futuras}
 \label{sec:hibridos}
