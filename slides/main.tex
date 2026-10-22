@@ -77,7 +77,7 @@
       \usebeamerfont{title in head/foot}\insertshorttitle
     \end{beamercolorbox}%
     \begin{beamercolorbox}[wd=.18\textwidth,ht=2.4ex,dp=1.2ex,rightskip=.6em]{date in head/foot}%
-      \hfill\usebeamerfont{date in head/foot}\insertframenumber\,/\,\inserttotalframenumber
+      \hfill\usebeamerfont{date in head/foot}\insertframenumber
     \end{beamercolorbox}%
   }%
 }
@@ -147,6 +147,9 @@
 % ---------------------------------------------------------------------------
 % Texto de relleno: se sustituye por el contenido real.
 \newcommand{\slot}[1]{\textcolor{upmgray}{\textit{#1}}}
+
+% Cita abreviada en las diapositivas (la bibliografía completa está en el informe).
+\newcommand{\srccite}[1]{{\scriptsize\color{upmgray}(#1)}}
 
 % Hueco para una figura: \figslot[ancho]{texto}
 \newcommand{\figslot}[2][0.9\linewidth]{%
@@ -647,7 +650,8 @@
 \begin{frame}[t]{Evolución del algoritmo PC}
   \footnotesize
   \renewcommand{\arraystretch}{1.12}
-  \begin{tabular}{@{}p{0.10\textwidth}p{0.26\textwidth}p{0.35\textwidth}p{0.25\textwidth}@{}}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}p{0.09\textwidth}p{0.25\textwidth}p{0.34\textwidth}p{0.24\textwidth}@{}}
     \toprule
     \textbf{Año} & \textbf{Variante} & \textbf{Idea clave} & \textbf{Referencia} \\
     \midrule
@@ -706,6 +710,7 @@
 % ===========================================================================
 
 \begin{frame}[t]{Pruebas de IC: el motor estadístico}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.53\textwidth}
       \begin{itemize}
@@ -741,10 +746,10 @@
         \]
         La correlación parcial no la detecta.
       \end{alertblock}
-      {\scriptsize\color{upmgray}Cuatro bloques de contrastes: parcial,
-      tablas, regresión/GCM y no paramétricos (kernel y kNN).}
     \end{column}
   \end{columns}
+  {\scriptsize\color{upmgray}Fuentes: Spirtes et al. (2000); Kitson et al.
+  (2023); Shah y Peters (2020).}
 \end{frame}
 
 % ===========================================================================
@@ -756,7 +761,8 @@
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.55\textwidth}
       \begin{itemize}
-        \item Datos continuos con normalidad conjunta.
+        \item Datos continuos con normalidad conjunta
+              \srccite{Lauritzen, 1996}.
         \item $I(X,Y\mid\mathbf Z)$ equivale a que la correlación parcial
               $\rho_{XY\cdot\mathbf Z}$ se anule.
         \item Se estima la covarianza muestral $S$ de $(X,Y,\mathbf Z)$ y se
@@ -768,7 +774,8 @@
       \]
       \begin{itemize}
         \item La transformada $z$ de Fisher convierte la correlación en un
-              estadístico aproximadamente normal.
+              estadístico aproximadamente normal \srccite{Hotelling, 1953;
+              Anderson, 2003}.
       \end{itemize}
     \end{column}
     \begin{column}{0.42\textwidth}
@@ -790,6 +797,7 @@
 \end{frame}
 
 \begin{frame}[t]{Correlación parcial: ventajas y limitaciones}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \begin{block}{Ventajas}
@@ -797,9 +805,9 @@
           \item Coste bajo: invertir el bloque de covarianzas.
           \item $p$-valores analíticos, sin remuestreo.
           \item Implementación de referencia en \texttt{pcalg} y
-                \texttt{bnlearn}.
+                \texttt{bnlearn} \srccite{Kalisch et al., 2012; Scutari, 2010}.
           \item Sostiene la consistencia del PC en alta dimensión con grafos
-                dispersos.
+                dispersos \srccite{Kalisch y Bühlmann, 2007}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -807,18 +815,21 @@
       \begin{alertblock}{Limitaciones}
         \begin{itemize}
           \item Solo es válido bajo normalidad y linealidad.
-          \item Fuera de ese modelo, las versiones de rango solo aproximan.
+          \item Fuera de ese modelo, las versiones de rango solo aproximan
+                \srccite{Baba et al., 2004}.
           \item Correlación nula no implica independencia en general.
           \item En muestras pequeñas, la aproximación asintótica del
-                $p$-valor puede ser pobre.
+                $p$-valor puede ser pobre \srccite{Tsamardinos et al., 2010}.
         \end{itemize}
       \end{alertblock}
     \end{column}
   \end{columns}
   \vspace{0.2cm}
   \begin{exampleblock}{Líneas recientes}
-    WLS para varianza no constante; correlaciones de rango y cópulas para
-    no normalidad; permutaciones para calibrar en muestra pequeña.
+    WLS para varianza no constante \srccite{Günther et al., 2022};
+    correlaciones de rango y cópulas para no normalidad
+    \srccite{Harris y Drton, 2012; Cui et al., 2016}; permutaciones para
+    calibrar en muestra pequeña.
   \end{exampleblock}
 \end{frame}
 
@@ -828,11 +839,13 @@
 \subsection{Tablas de contingencia}
 
 \begin{frame}[t]{Tablas de contingencia: el contraste discreto}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.57\textwidth}
       \begin{itemize}
         \item Datos discretos o categóricos: se comparan los conteos observados
-              con los esperados bajo independencia.
+              con los esperados bajo independencia
+              \srccite{Spirtes et al., 2000; Kitson et al., 2023}.
         \item $n_{ijk}$: observaciones con $X=i$, $Y=j$ y $\mathbf Z=k$.
       \end{itemize}
       \begin{block}{Estadísticos}
@@ -853,13 +866,15 @@
           \nu=(I-1)(J-1)\prod_l K_l
         \]
         Se rechaza $H_0$ si el estadístico supera
-        $\chi^2_{\nu,1-\alpha}$.
+        $\chi^2_{\nu,1-\alpha}$ \srccite{Spirtes et al., 2000}.
       \end{block}
       \begin{exampleblock}{Lectura}
         $G^2=2n\,\hat I(X,Y\mid\mathbf Z)$: versión discreta del contraste de
-        razón de verosimilitudes, dentro de la familia de información mutua.
+        razón de verosimilitudes, dentro de la familia de información mutua
+        \srccite{Scutari, 2010}.
       \end{exampleblock}
-      {\scriptsize\color{upmgray}Ordinales: tendencia de Jonckheere--Terpstra.}
+      {\scriptsize\color{upmgray}Ordinales: tendencia de Jonckheere--Terpstra
+      \srccite{Jonckheere, 1954; Terpstra, 1952}.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -869,12 +884,13 @@
     \begin{column}{0.48\textwidth}
       \begin{block}{Ventajas}
         \begin{itemize}
-          \item Contraste canónico para datos categóricos.
+          \item Contraste canónico para datos categóricos
+                \srccite{Kitson et al., 2023}.
           \item $p$-valores analíticos.
           \item Lectura directa como divergencia entre la tabla observada y la
                 esperada.
           \item En las simulaciones originales del PC, $G^2$ acertó el grafo
-                más veces que $\chi^2$.
+                más veces que $\chi^2$ \srccite{Spirtes et al., 2000}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -885,7 +901,8 @@
                 $|\mathbf Z|$ y la cardinalidad.
           \item Con pocas observaciones por celda, la aproximación $\chi^2$
                 deja de ser fiable.
-          \item Regla práctica: $n\ge 5\times$ número de celdas.
+          \item Regla práctica: $n\ge 5\times$ número de celdas
+                \srccite{Spirtes et al., 2000}.
           \item El coste es lineal en celdas, pero las celdas son el cuello de
                 botella.
         \end{itemize}
@@ -928,11 +945,12 @@
     \begin{column}{0.44\textwidth}
       \begin{block}{Distribución nula}
         $T_n\longrightarrow\mathcal N(0,1)$ si el producto de los errores
-        cuadráticos medios de ambas regresiones es $o(n^{-1})$.
+        cuadráticos medios de ambas regresiones es $o(n^{-1})$
+        \srccite{Shah y Peters, 2020}.
       \end{block}
       \begin{exampleblock}{Caso lineal-gaussiano}
         El contraste coincide, salvo normalización, con la correlación parcial
-        de Fisher.
+        de Fisher \srccite{Shah y Peters, 2020}.
       \end{exampleblock}
       \begin{alertblock}{Idea}
         No fija la forma de la dependencia, sino la de las medias
@@ -949,7 +967,9 @@
         \begin{itemize}
           \item Flexible: lineal, GLM, bosques y kernels; admite datos mixtos.
           \item Cubre parte de la no linealidad.
-          \item WGCM pondera por la varianza; el doble ML evita el sobreajuste.
+          \item WGCM pondera por la varianza \srccite{Scheidegger et al., 2022};
+                el doble ML evita el sobreajuste \srccite{Chernozhukov et al.,
+                2018}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -967,8 +987,9 @@
     \end{column}
   \end{columns}
   \begin{exampleblock}{Líneas recientes}
-    WGCM amplía las alternativas a costa de potencia; el doble ML permite
-    regresiones flexibles y calibradas.
+    WGCM amplía las alternativas a costa de potencia
+    \srccite{Scheidegger et al., 2022}; el doble ML permite regresiones
+    flexibles y calibradas \srccite{Chernozhukov et al., 2018}.
   \end{exampleblock}
 \end{frame}
 
@@ -978,15 +999,18 @@
 \subsection{Métodos no paramétricos}
 
 \begin{frame}[t]{Kernel y vecinos: contrastes no paramétricos}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \begin{block}{Kernel: HSIC y KCI}
         \begin{itemize}
           \item HSIC: dos variables son independientes si y solo si ninguna
-                función de una covaría con ninguna función de la otra.
+                función de una covaría con ninguna función de la otra
+                \srccite{Gretton et al., 2005}.
           \item KCI elimina $\mathbf Z$ por regresión no paramétrica y aplica
-                una medida tipo HSIC a los residuos.
-          \item Nulo por Monte Carlo o aproximación gamma.
+                una medida tipo HSIC a los residuos \srccite{Zhang et al., 2011}.
+          \item Nulo por Monte Carlo o aproximación gamma
+                \srccite{Zhang et al., 2011}.
         \end{itemize}
         \[
           \mathrm{HSIC}(X,Y)=0\iff X\perp Y.
@@ -997,10 +1021,12 @@
       \begin{block}{Vecinos más cercanos}
         \begin{itemize}
           \item La información mutua condicional se estima con un estimador
-                de $k$ vecinos.
-          \item El contraste se calibra con permutaciones locales.
+                de $k$ vecinos \srccite{Runge, 2018}.
+          \item El contraste se calibra con permutaciones locales
+                \srccite{Runge, 2018}.
           \item RCIT/RCoT sustituyen los kernels por características de
-                Fourier aleatorias y pasan a coste lineal.
+                Fourier aleatorias y pasan a coste lineal
+                \srccite{Strobl et al., 2019}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -1013,6 +1039,7 @@
 \end{frame}
 
 \begin{frame}[t]{Métodos no paramétricos: ventajas y limitaciones}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \begin{block}{Ventajas}
@@ -1020,27 +1047,31 @@
           \item No asumen forma funcional.
           \item Captan dependencias no lineales.
           \item Con densidades no suaves, los vecinos superan en potencia a
-                los métodos de kernel.
-          \item Los de kernel mitigan la maldición de la dimensionalidad;
-                RCIT/RCoT escalan a muestras grandes.
+                los métodos de kernel \srccite{Runge, 2018}.
+          \item Los de kernel mitigan la maldición de la dimensionalidad
+                \srccite{Zhang et al., 2011}; RCIT/RCoT escalan a muestras
+                grandes \srccite{Strobl et al., 2019}.
         \end{itemize}
       \end{block}
     \end{column}
     \begin{column}{0.49\textwidth}
       \begin{alertblock}{Limitaciones}
         \begin{itemize}
-          \item KCI es $\mathcal O(n^2)$ o peor: inviable en muestras grandes.
+          \item KCI es $\mathcal O(n^2)$ o peor: inviable en muestras grandes
+                \srccite{Strobl et al., 2019}.
           \item La distribución nula analítica no está bien calibrada por
-                debajo de $\sim 1000$ muestras.
-          \item Las permutaciones mejoran la calibración a costa de potencia.
+                debajo de $\sim 1000$ muestras \srccite{Runge, 2018}.
+          \item Las permutaciones mejoran la calibración a costa de potencia
+                \srccite{Runge, 2018}.
         \end{itemize}
       \end{alertblock}
     \end{column}
   \end{columns}
-  \vspace{0.2cm}
+  \vspace{-0.1cm}
   \begin{exampleblock}{Líneas recientes}
     Contrastes \emph{distribution-free} cuyo índice se anula si y solo si hay
-    independencia; permutaciones aprendidas para estimar mejor el nulo.
+    independencia \srccite{Cai et al., 2022}; permutaciones aprendidas para
+    estimar mejor el nulo \srccite{Doran et al., 2014}.
   \end{exampleblock}
 \end{frame}
 
@@ -1050,39 +1081,42 @@
 \subsection{Extensiones para causalidad}
 
 \begin{frame}[t]{De la independencia a la causalidad}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.47\textwidth}
       \begin{block}{El problema de encadenar contrastes}
         \begin{itemize}
           \item Ni $\alpha$ ni la potencia miden el error de la búsqueda, que
-                depende del número de contrastes y de la estructura recorrida.
+                depende del número de contrastes y de la estructura recorrida
+                \srccite{Spirtes et al., 2000}.
           \item Una eliminación errónea inhibe contrastes posteriores y
-                arrastra esqueleto y orientación.
-          \item La consistencia exige $\alpha_n\to 0$ con $n$.
+                arrastra esqueleto y orientación
+                \srccite{Colombo y Maathuis, 2014}.
+          \item La consistencia exige $\alpha_n\to 0$ con $n$
+                \srccite{Kalisch y Bühlmann, 2007}.
         \end{itemize}
       \end{block}
     \end{column}
     \begin{column}{0.50\textwidth}
       \begin{block}{Nuevos criterios de separación}
         \begin{itemize}
-          \item \textbf{$\sigma$-separación}: mecanismos no lineales y ciclos.
+          \item \textbf{$\sigma$-separación}: mecanismos no lineales y ciclos
+                \srccite{Forré y Mooij, 2018}.
           \item \textbf{$m$-separación} en MAG/PAG: variables latentes y sesgo
-                de selección (FCI).
+                de selección (FCI) \srccite{Richardson y Spirtes, 2002}.
         \end{itemize}
       \end{block}
       \begin{block}{Nuevos escenarios}
         \begin{itemize}
           \item \textbf{COmbINE}: unifica datos observacionales e
-                intervencionales parcialmente solapados.
+                intervencionales parcialmente solapados
+                \srccite{Triantafillou y Tsamardinos, 2015}.
           \item \textbf{CTBN}: contrastes para trayectorias continuas; explotan
-                la asimetría del tiempo.
+                la asimetría del tiempo \srccite{Villa y Stella, 2016}.
         \end{itemize}
       \end{block}
     \end{column}
   \end{columns}
-  \vspace{0.1cm}
-  {\scriptsize\color{upmgray}Forré \& Mooij (2018); Richardson \& Spirtes
-  (2002); Triantafillou \& Tsamardinos (2015); Villa \& Stella (2016).}
 \end{frame}
 
 \begin{frame}[t]{Extensiones causales: alcance y límites}
@@ -1111,11 +1145,13 @@
       \end{alertblock}
     \end{column}
   \end{columns}
-  \vspace{0.2cm}
+  \vspace{0.1cm}
   \begin{exampleblock}{Cierre de la sección}
     Esta fragilidad estructural es la motivación central de los enfoques
     híbridos de la sección~3.
   \end{exampleblock}
+  {\scriptsize\color{upmgray}Fuentes: Forré y Mooij (2018); Richardson y
+  Spirtes (2002); Triantafillou y Tsamardinos (2015); Villa y Stella (2016).}
 \end{frame}
 
 % ============================================================================
@@ -1576,35 +1612,64 @@
 
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Conclusiones}
-  \begin{itemize}
-    \item \slot{Conclusión 1}
-    \item \slot{Conclusión 2}
-    \item \slot{Conclusión 3}
-    \item \slot{Conclusión 4}
+  \footnotesize
+  \begin{itemize}\setlength{\itemsep}{2pt}
+    \item \textbf{No existe una estrategia universalmente superior.} El
+          rendimiento depende de la interacción entre potencia estadística,
+          coste computacional y supuestos causales.
+    \item \textbf{El PC es auditable, pero frágil.} Cada decisión es trazable;
+          en muestra finita, un error se propaga al esqueleto y a la
+          orientación. Las limitaciones se desplazan, no se eliminan.
+    \item \textbf{Las pruebas de IC acotan lo que puede aprenderse.} Ningún
+          contraste tiene potencia uniforme frente a todas las alternativas sin
+          restringir la clase nula: no hay una prueba universal.
+    \item \textbf{La independencia no basta para orientar.} Bajo Markov,
+          fidelidad y suficiencia, el PC devuelve como máximo un CPDAG; orientar
+          más exige supuestos, intervenciones o conocimiento de dominio.
+    \item \textbf{Los híbridos no garantizan una mejora.} Un falso negativo en
+          el filtro deja aristas irrecuperables; la clave está en diseñar la
+          interfaz entre restricciones y puntuaciones.
   \end{itemize}
   \vfill
-  {\scriptsize\color{upmgray}% TODO: sustituir por las conclusiones propias del informe.
-  [Esqueleto: completar con las conclusiones del informe.]}
+  \begin{exampleblock}{La pregunta relevante}
+    \centering No qué algoritmo es mejor en abstracto, sino \alert{qué supuestos
+    son defendibles} y \alert{qué errores pueden tolerarse} en cada dominio.
+  \end{exampleblock}
+  {\scriptsize\color{upmgray}Revisión narrativa: las cifras proceden de los
+  estudios originales, no de una reproducción independiente.}
 \end{frame}
 
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Líneas futuras}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{block}{Línea 1}
-        \slot{Descripción breve}
+      \begin{block}{1. Garantías en muestra finita}
+        \small Cotas, conjuntos de confianza sobre el CPDAG y calibración
+        adaptativa del nivel de significación.
       \end{block}
-      \begin{block}{Línea 2}
-        \slot{Descripción breve}
+      \begin{block}{2. Pruebas adaptativas}
+        \small Seleccionar o combinar contrastes según el dato, $n$ y
+        $|\mathbf S|$; extensión a datos mixtos y de alta dimensión.
+      \end{block}
+      \begin{block}{3. Supuestos relajados}
+        \small Variables latentes, ciclos, no estacionariedad y eventos
+        extremos, con garantías formales y datos intervencionales.
       \end{block}
     \end{column}
     \begin{column}{0.49\textwidth}
-      \begin{block}{Línea 3}
-        \slot{Descripción breve}
+      \begin{block}{4. Escalabilidad y enfoques diferenciables}
+        \small Paralelización, algoritmos \emph{anytime} y relajaciones
+        diferenciables que conserven garantías discretas.
       \end{block}
-      \begin{block}{Línea 4}
-        \slot{Descripción breve}
+      \begin{block}{5. Evaluación reproducible}
+        \small Bancos de prueba comunes que varíen topología, muestra,
+        dimensionalidad y confusión latente, midiendo calidad estructural,
+        calibración y coste.
       \end{block}
+      \begin{exampleblock}{Cierre}
+        \small Las garantías condicionan el diseño de las pruebas; relajar
+        supuestos exige nuevas formas de evaluar la identificabilidad.
+      \end{exampleblock}
     \end{column}
   \end{columns}
 \end{frame}
@@ -1650,15 +1715,6 @@
 %  ANEXO
 % ===========================================================================
 \appendix
-
-\begin{frame}[t]{Anexo: material de respaldo}
-  \begin{itemize}
-    \item \slot{Tabla de variantes del PC}
-    \item \slot{Figura de decisión sobre contrastes}
-    \item \slot{Detalles que no caben en el cuerpo principal}
-  \end{itemize}
-\end{frame}
-
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Anexo: cuándo elegir cada contraste}
   \footnotesize
