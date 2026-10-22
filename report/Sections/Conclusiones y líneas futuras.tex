@@ -1,2 +1,88 @@
 \section{Conclusiones y líneas futuras}
-Propias.
+\subsection{Conclusiones}
+
+El presente trabajo ha revisado el aprendizaje estructural de redes bayesianas basado en
+restricciones, tomando el algoritmo PC como hilo conductor y articulando el análisis en
+tres ejes: variantes del algoritmo, pruebas de independencia condicional y enfoques
+híbridos. La conclusión principal es que el rendimiento depende de la interacción entre
+potencia estadística, coste computacional y supuestos causales, y que no existe una
+estrategia universalmente superior.
+
+El PC es el método de referencia de la familia \emph{constraint-based}: cada decisión de
+poda u orientación se apoya en una serie de contrastes de independencia condicional. Esa
+trazabilidad es también su principal vulnerabilidad, pues en muestras finitas los errores
+se propagan al esqueleto y a la orientación \citep{spirtes2000causation, colombo2014order}.
+Las cinco limitaciones revisadas (consistencia en alta dimensión, dependencia del orden,
+pérdida de potencia con $|\mathbf{S}|$, coste computacional y rigidez de supuestos) no se
+eliminan con las variantes que tratamos, sino que se desplazan.
+
+Las pruebas de independencia condicional determinan qué dependencias pueden detectarse y,
+por tanto, qué grafos son alcanzables. La correlación parcial es eficiente bajo normalidad;
+las tablas de contingencia son el contraste canónico para datos discretos, pero sufren
+escasez de celdas; la regresión y la medida de covarianza generalizada cubren datos mixtos
+y parte de la no linealidad, aunque dependen de la especificación de los modelos; y los
+contrastes de kernel detectan dependencias no lineales a costa de un mayor coste y de una
+calibración delicada \citep{shah2020gcm, zhang2011kci, runge2018conditional,
+strobl2019approximate}. \citet{shah2020gcm} muestran que ningún contraste puede tener
+potencia uniforme frente a todas las alternativas sin restringir la clase nula, lo que
+confirma que no existe una prueba universal.
+
+La independencia condicional tampoco identifica la dirección causal: bajo Markov y
+fidelidad, el PC devuelve como máximo un CPDAG, por lo que parte de las orientaciones queda
+indeterminada con datos observacionales \citep{spirtes2000causation}. Las extensiones
+causales amplían el ámbito tratable, pero la orientación adicional exige supuestos de
+separación, intervenciones o conocimiento de dominio
+\citep{richardson2002ancestral, triantafillou2015constraint, mooij2020constraint}; la
+inferencia causal es, por tanto, una inferencia bajo supuestos explícitos.
+
+Los métodos híbridos combinan ambos paradigmas, pero no garantizan por sí solos un mejor
+resultado. Las estrategias \emph{Restrict/Maximise}, desde CB y Sparse Candidate hasta MMHC
+y H2PC, reducen el espacio de búsqueda, aunque un falso negativo en la fase de restricción
+puede eliminar aristas irrecuperables
+\citep{SINGH1993259, Friedman1999SparseCandidate, tsamardinos2006max, Gasse2014H2PC}.
+ARGES muestra que la restricción debe ser adaptativa para preservar la consistencia
+\citep{Nandy2018ARGES}, y GFCI incorpora variables latentes al combinar la búsqueda voraz
+con las reglas de FCI \citep{Ogarrio2016GFCI}. El estudio comparativo de
+\citet{Karadag2026Evaluation} muestra que ninguna familia domina sistemáticamente y que el
+rendimiento depende de la topología, el tamaño muestral y la métrica. La clave no es
+sustituir un paradigma por otro, sino diseñar la interfaz entre restricciones y
+puntuaciones para que los errores de la primera fase sean recuperables por la segunda.
+
+En definitiva, la pregunta relevante no es qué algoritmo es mejor en abstracto, sino qué
+supuestos son defendibles en cada dominio y qué errores pueden tolerarse. La elección debe
+guiarse por el tipo de dato, el tamaño muestral, la dimensionalidad, la densidad, la
+presencia de variables latentes, el objetivo (predicción o estimación causal) y el
+presupuesto computacional. El enfoque basado en restricciones mantiene una ventaja difícil
+de sustituir: la posibilidad de auditar cada decisión y comunicar sus supuestos. Esa
+interpretabilidad, junto con su papel en los métodos híbridos, explica por qué el PC y sus
+variantes siguen siendo una referencia en el descubrimiento causal.
+
+\subsection{Limitaciones del estudio}
+
+Esta revisión es narrativa y no sistemática, por lo que la selección de trabajos puede estar
+sesgada y las afirmaciones sobre rendimiento proceden de los estudios originales, no de una
+reproducción independiente.
+
+\subsection{Líneas futuras}
+
+\begin{enumerate}
+  \item \textbf{Garantías en muestra finita.} Desarrollar cotas, conjuntos de confianza
+  sobre el CPDAG y procedimientos de calibración adaptativa del nivel de significación.
+  \item \textbf{Pruebas adaptativas.} Seleccionar o combinar contrastes según el dato, el
+  tamaño muestral y $|\mathbf{S}|$, con extensión a datos mixtos y de alta dimensión.
+  \item \textbf{Supuestos relajados.} Integrar variables latentes, ciclos,
+  no estacionariedad y eventos extremos con garantías formales, aprovechando datos
+  intervencionales cuando estén disponibles.
+  \item \textbf{Escalabilidad y enfoques diferenciables.} Combinar paralelización,
+  algoritmos \emph{anytime} y relajaciones diferenciables que conserven garantías discretas
+  e integren restricciones corregibles durante la optimización.
+  \item \textbf{Evaluación reproducible.} Bancos de prueba comunes que varíen topología,
+  muestra, dimensionalidad y confusión latente, informando de calidad estructural,
+  calibración y coste computacional.
+\end{enumerate}
+
+Estas líneas son complementarias: las garantías condicionan el diseño de las pruebas, la
+relajación de supuestos exige nuevas formas de evaluar la identificabilidad y la
+escalabilidad determina qué métodos son aplicables. Su avance permitiría abordar el
+descubrimiento causal como un problema de ingeniería de supuestos, datos y coste, en el que
+el PC y sus variantes seguirían ocupando un lugar central.
