@@ -1400,7 +1400,7 @@
         a las relaciones candidatas}
       \end{block}
 
-      \begin{alertblock}{Dependencia del filtro}
+      \begin{alertblock}{Limitación}
         \small
         Si MMPC omite una relación verdadera,
         Hill-Climbing no puede recuperarla.
@@ -1492,11 +1492,11 @@
 
     \begin{column}{0.44\textwidth}
 
-      \begin{block}{Aportación frente a MMHC}
+      \begin{exampleblock}{Aportación frente a MMHC}
         Mejora la identificación de relaciones
         candidatas sin modificar la arquitectura
         general de aprendizaje.
-      \end{block}
+      \end{exampleblock}
 
       \begin{alertblock}{Limitación}
         La selección más exhaustiva de candidatos
@@ -1533,12 +1533,12 @@
 
     \begin{column}{0.44\textwidth}
 
-      \begin{block}{Aportación frente a H2PC}
+      \begin{exampleblock}{Aportación frente a H2PC}
         En lugar de mejorar únicamente las
         restricciones iniciales, ARGES
         \textbf{flexibiliza su aplicación}
         durante la optimización.
-      \end{block}
+      \end{exampleblock}
 
       \begin{alertblock}{Limitación}
         La relajación solo permite determinadas
@@ -1582,11 +1582,11 @@
 
   \vspace{0.2cm}
 
-  \begin{exampleblock}{Más allá de Restrict/Maximise}
+  \begin{block}{Más allá de Restrict/Maximise}
     Existen otras estrategias híbridas que combinan
     restricciones y puntuaciones sin seguir necesariamente
     este orden de aprendizaje.
-  \end{exampleblock}
+  \end{block}
 
   {\scriptsize\color{upmgray}
   Gasse et al. (2014); Nandy et al. (2018).}
@@ -1737,7 +1737,7 @@
 
     \begin{column}{0.54\textwidth}
       \begin{itemize}
-        \item Una evaluación de 2026 comparó
+        \item En Karadag(2026) se comparó
         \textbf{14 algoritmos} \textit{constraint-based},
         \textit{score-based} e híbridos.
 
@@ -1782,7 +1782,7 @@
 
 % 14 / 01:10. Cierre del bloque; esta pagina sustituye los frames vacios de
 % Conclusiones y Lineas futuras que habia en la seccion original.
-\begin{frame}[t]{Limitaciones y líneas futuras}
+\begin{frame}[t]{Líneas futuras de modelos híbridos}
 
   % Primera fila
   \begin{columns}[T,onlytextwidth]
@@ -1822,19 +1822,36 @@
 
   \vfill
 
-  {\scriptsize\color{upmgray}
-    Kitson et al. (2023); Gasse et al. (2014);
-    Nandy et al. (2018); Wang et al. (2024).
-  }
-
   \vspace{0.1cm}
 
 \end{frame}
 % FIN DEL FRAGMENTO. Las referencias / cierre general deben permanecer
 % fuera de esta seccion si el equipo decide incluirlas globalmente.
 
+{
+\setbeamertemplate{section page}{%
+  \begin{tikzpicture}[remember picture,overlay]
 
+    % Fondo azul
+    \fill[upmblue]
+      (current page.south west)
+      rectangle (current page.north east);
 
+    % Título centrado
+    \node[align=center, text width=0.9\paperwidth]
+      at (current page.center) {%
+        {\color{white}
+        \fontsize{30}{36}\selectfont
+        \bfseries\insertsectionhead}\\[0.4cm]
+
+        {\color{upmorange}\rule{4.5cm}{3pt}}
+      };
+
+  \end{tikzpicture}%
+}
+
+\section[Conclusiones y líneas futuras]{Conclusiones y líneas futuras}
+}
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Conclusiones}
   \footnotesize
