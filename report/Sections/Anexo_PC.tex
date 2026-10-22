@@ -22,7 +22,7 @@
 \textbf{PC muestral gaussiano} \newline \citet{kalisch2007estimating} & Correlación parcial con $z$ de Fisher y nivel $\alpha_n \to 0$. & Consistente con $p = O(n^a)$ y grafos dispersos; exige fidelidad fuerte \citep{uhler2013geometry}. \\
 \midrule
 \multicolumn{3}{l}{\textit{(ii) Dependencia del orden}} \\
-\textbf{CPC} \newline \citet{ramsey2006adjacency} & Orienta un triple solo si todos sus conjuntos separadores coinciden; si no, lo marca como ambiguo. & Menos errores de orientación, salida menos informativa. \\
+\textbf{CPC} \newline \citet{ramsey2006adjacency} & Orienta un triple solo si el nodo central está en todos sus conjuntos separadores o en ninguno; si no, lo marca como ambiguo. & Menos errores de orientación, salida menos informativa. \\
 \addlinespace
 \textbf{PC-stable} \newline \citet{colombo2014order} & Congela las adyacencias al inicio de cada nivel $\ell$. & Esqueleto independiente del orden; más contrastes. \\
 \addlinespace
@@ -41,7 +41,7 @@
 \textbf{Parallel-PC} \newline \citet{le2016fast} & Reparte entre núcleos los contrastes de cada nivel de PC-stable. & Independiente del orden; DREAM5 de $>24$\,h a $<6$\,h. \\
 \midrule
 \multicolumn{3}{l}{\textit{(v) Relajación de supuestos}} \\
-\textbf{TPC} \newline \citet{biswas2024consistent} & PC para series temporales con relaciones retardadas y contemporáneas; contrastes de Pearson y HSIC. & Consistente bajo $\rho$-\emph{mixing} y mezcla fuerte. \\
+\textbf{TPC} \newline \citet{biswas2022timeaware} & PC para series temporales con relaciones retardadas y contemporáneas; contrastes de Pearson y HSIC. & Consistente bajo $\rho$-\emph{mixing} y mezcla fuerte \citep{biswas2024consistent}. \\
 \addlinespace
 \textbf{PCMCI} \newline \citet{runge2019detecting} & Selección de condicionantes de tipo PC seguida de un contraste MCI. & Controla falsos positivos por autocorrelación. \\
 \addlinespace
