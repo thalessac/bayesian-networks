@@ -77,7 +77,7 @@
       \usebeamerfont{title in head/foot}\insertshorttitle
     \end{beamercolorbox}%
     \begin{beamercolorbox}[wd=.18\textwidth,ht=2.4ex,dp=1.2ex,rightskip=.6em]{date in head/foot}%
-      \hfill\usebeamerfont{date in head/foot}\insertframenumber\,/\,\inserttotalframenumber
+      \hfill\usebeamerfont{date in head/foot}\insertframenumber
     \end{beamercolorbox}%
   }%
 }
@@ -126,11 +126,30 @@
   flow arrow/.style={-{Latex[length=2.2mm]}, draw=upmorange, line width=1pt}
 }
 
+% Nodos y aristas de los grafos de ejemplo (introducción y algoritmo PC).
+\tikzset{
+  bn small/.style={
+    circle, draw=upmblue, fill=upmlight, line width=0.8pt,
+    font=\small, minimum size=0.62cm, inner sep=0pt
+  },
+  bn edge/.style={-{Latex[length=2mm]}, draw=upmblue, line width=0.9pt},
+  skel/.style={draw=upmblue, line width=0.9pt},
+  removed/.style={draw=upmorange, dashed, line width=0.9pt},
+  limit/.style={
+    draw=upmblue!70, fill=upmblue!8, rounded corners=3pt,
+    align=center, text width=2.15cm, minimum height=1.9cm,
+    font=\footnotesize, inner sep=3pt
+  }
+}
+
 % ---------------------------------------------------------------------------
 %  Macros de plantilla
 % ---------------------------------------------------------------------------
 % Texto de relleno: se sustituye por el contenido real.
 \newcommand{\slot}[1]{\textcolor{upmgray}{\textit{#1}}}
+
+% Cita abreviada en las diapositivas (la bibliografía completa está en el informe).
+\newcommand{\srccite}[1]{{\scriptsize\color{upmgray}(#1)}}
 
 % Hueco para una figura: \figslot[ancho]{texto}
 \newcommand{\figslot}[2][0.9\linewidth]{%
@@ -163,13 +182,112 @@
 \end{frame}
 
 % ===========================================================================
+%  INTRODUCCIÓN (antes del índice; no cuenta como sección)
+% ===========================================================================
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{Aprender la estructura: tres familias de métodos}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Puntuación y búsqueda}
+        Evalúa grafos completos con una puntuación (p.\,ej.\ BIC) y busca el
+        mejor.\\[0.2cm]
+        {\small\color{upmgray}\itshape Como probarse ropa hasta encontrar la
+        que mejor queda.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{alertblock}{Basados en restricciones}
+        Pruebas locales de independencia condicional; cada decisión es
+        rastreable.\\[0.2cm]
+        {\small\color{upmgray}\itshape Como un detective que descarta
+        sospechosos con pistas.}
+      \end{alertblock}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{alertblock}{Híbridos}
+        Las restricciones reducen el espacio y una puntuación refina el grafo
+        (p.\,ej.\ MMHC).\\[0.2cm]
+        {\small\color{upmgray}\itshape El detective hace la lista corta; el
+        jurado decide.}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+  \vspace{0.4cm}
+  \begin{exampleblock}{Tema del trabajo}
+    De las restricciones a los híbridos: el PC, sus pruebas de independencia
+    y su evolución hacia los métodos híbridos.
+  \end{exampleblock}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{Independencia condicional}
+  \framesubtitle{¿$X$ e $Y$ son independientes si ya conozco $Z$?}
+  \vspace{0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.31\textwidth}
+      \centering\textbf{\color{upmblue}Cadena}\\[0.2cm]
+      \begin{tikzpicture}[x=1.15cm]
+        \node[bn small] (X) at (0,0) {$X$};
+        \node[bn small] (Z) at (1,0) {$Z$};
+        \node[bn small] (Y) at (2,0) {$Y$};
+        \draw[bn edge] (X) -- (Z);
+        \draw[bn edge] (Z) -- (Y);
+      \end{tikzpicture}\\[0.2cm]
+      $X\perp Y\mid Z$
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \centering\textbf{\color{upmblue}Bifurcación}\\[0.2cm]
+      \begin{tikzpicture}[x=1.15cm]
+        \node[bn small] (X) at (0,0) {$X$};
+        \node[bn small] (Z) at (1,0) {$Z$};
+        \node[bn small] (Y) at (2,0) {$Y$};
+        \draw[bn edge] (Z) -- (X);
+        \draw[bn edge] (Z) -- (Y);
+      \end{tikzpicture}\\[0.2cm]
+      $X\perp Y\mid Z$
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \centering\textbf{\color{upmorange}Colisor}\\[0.2cm]
+      \begin{tikzpicture}[x=1.15cm]
+        \node[bn small] (X) at (0,0) {$X$};
+        \node[bn small] (Z) at (1,0) {$Z$};
+        \node[bn small] (Y) at (2,0) {$Y$};
+        \draw[bn edge] (X) -- (Z);
+        \draw[bn edge] (Y) -- (Z);
+      \end{tikzpicture}\\[0.2cm]
+      $X\perp Y$, pero dependientes dado $Z$
+    \end{column}
+  \end{columns}
+  \vspace{0.4cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Condición de Markov}
+        El grafo implica independencias en los datos.
+      \end{block}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{block}{Fidelidad}
+        Los datos no tienen independencias extra por coincidencias.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vfill
+  {\scriptsize\color{upmgray}Los colisores dejan una huella distinta en los
+  datos: son la clave para orientar las flechas.}
+\end{frame}
+
+% ===========================================================================
 %  CONTENIDO
 % ===========================================================================
 \begin{frame}[t]{Contenido}
   \tableofcontents[hideallsubsections]
   \vfill
   \begin{block}{Hilo conductor}
-    \slot{Una frase que conecte las tres secciones de la presentación.}
+    Aprender el grafo de una red bayesiana a partir de datos haciendo
+    preguntas del tipo \emph{¿son $X$ e $Y$ independientes si ya conozco $Z$?}:
+    el algoritmo PC, las pruebas estadísticas que responden a esas preguntas
+    y los híbridos que corrigen su fragilidad.
   \end{block}
 \end{frame}
 
@@ -178,96 +296,410 @@
 % ===========================================================================
 
 % ---------------------------------------------------------------------------
-\begin{frame}[t]{Motivación y objetivos}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Punto de partida}
-        \begin{itemize}
-          \item \slot{Idea 1}
-          \item \slot{Idea 2}
-          \item \slot{Idea 3}
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \begin{block}{Objetivo de la presentación}
-        \begin{itemize}
-          \item \slot{Qué se revisa}
-          \item \slot{Por qué importa}
-          \item \slot{Qué se concluye}
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
+\begin{frame}[t]{Algoritmo PC: fundamentos}
+  \framesubtitle{Peter Spirtes y Clark Glymour (1991): dos fases a partir de los datos.}
+  \begin{center}
+    \begin{tikzpicture}[node distance=0.55cm]
+      \node[flow,text width=2.6cm] (datos) {\textbf{Datos}\\[2pt]
+        {\footnotesize Observaciones de las variables}};
+      \node[flow,text width=2.6cm,right=of datos] (f1) {\textbf{Fase 1}\\[2pt]
+        {\footnotesize Esqueleto: qué está conectado}};
+      \node[flow,text width=2.6cm,right=of f1] (f2) {\textbf{Fase 2}\\[2pt]
+        {\footnotesize Orientación: hacia dónde van las flechas}};
+      \node[flow,text width=2.6cm,right=of f2,fill=upmorange!10,draw=upmorange]
+        (cpdag) {\textbf{CPDAG}\\[2pt]
+        {\footnotesize Grafo parcialmente dirigido}};
+      \draw[flow arrow] (datos) -- (f1);
+      \draw[flow arrow] (f1) -- (f2);
+      \draw[flow arrow] (f2) -- (cpdag);
+    \end{tikzpicture}
+  \end{center}
+  \begin{itemize}
+    \item Supuestos: condición de Markov causal, fidelidad y suficiencia
+          causal (sin variables ocultas).
+    \item Fase 1: parte del grafo completo y poda aristas con contrastes de
+          independencia, guardando el conjunto separador de cada par.
+    \item Fase 2: orienta $v$-estructuras (colisores) y propaga con las reglas
+          de Meek.
+  \end{itemize}
+  \begin{alertblock}{La idea que lo hace eficiente}
+    Solo condiciona sobre los vecinos actuales de cada variable, no sobre
+    todos los subconjuntos posibles (como hacía SGS). Coste exponencial en el
+    peor caso, pero polinómico si el grafo es poco denso.
+  \end{alertblock}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}[t]{Algoritmo PC: fundamentos}
+\begin{frame}[t]{Fase 1: el esqueleto}
+  \framesubtitle{Todo conectado al inicio; se eliminan aristas con pruebas.}
+  {\small\color{upmgray}Grafo verdadero (desconocido): $A\to C\leftarrow B$,
+  $C\to D$.}
+  \vspace{0.2cm}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.53\textwidth}
-      \begin{itemize}
-        \item \slot{Supuestos: Markov causal, fidelidad, suficiencia causal.}
-        \item \slot{Fase de esqueleto: poda con contrastes de independencia.}
-        \item \slot{Fase de orientación: $v$-estructuras y reglas de Meek.}
-        \item \slot{Salida: CPDAG.}
-      \end{itemize}
-      \begin{alertblock}{Idea clave}
-        \slot{La frase que el público debe recordar de esta diapositiva.}
+    \begin{column}{0.31\textwidth}
+      \centering\textbf{\color{upmblue}1. Grafo completo}\\[0.25cm]
+      \begin{tikzpicture}[x=1.1cm,y=0.9cm]
+        \node[bn small] (A) at (0,2) {$A$};
+        \node[bn small] (B) at (2,2) {$B$};
+        \node[bn small] (C) at (1,1) {$C$};
+        \node[bn small] (D) at (1,0) {$D$};
+        \draw[skel] (A) -- (B);
+        \draw[skel] (A) -- (C);
+        \draw[skel] (B) -- (C);
+        \draw[skel] (C) -- (D);
+        \draw[skel] (A) to[bend right=25] (D);
+        \draw[skel] (B) to[bend left=25] (D);
+      \end{tikzpicture}\\[0.25cm]
+      {\small Todo conectado.}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \centering\textbf{\color{upmblue}2. Orden $\ell=0$}\\[0.25cm]
+      \begin{tikzpicture}[x=1.1cm,y=0.9cm]
+        \node[bn small] (A) at (0,2) {$A$};
+        \node[bn small] (B) at (2,2) {$B$};
+        \node[bn small] (C) at (1,1) {$C$};
+        \node[bn small] (D) at (1,0) {$D$};
+        \draw[removed] (A) -- (B);
+        \draw[skel] (A) -- (C);
+        \draw[skel] (B) -- (C);
+        \draw[skel] (C) -- (D);
+        \draw[skel] (A) to[bend right=25] (D);
+        \draw[skel] (B) to[bend left=25] (D);
+      \end{tikzpicture}\\[0.25cm]
+      {\small $A\perp B$ $\Rightarrow$ se elimina $A$--$B$\\
+      $S(A,B)=\emptyset$}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \centering\textbf{\color{upmblue}3. Orden $\ell=1$}\\[0.25cm]
+      \begin{tikzpicture}[x=1.1cm,y=0.9cm]
+        \node[bn small] (A) at (0,2) {$A$};
+        \node[bn small] (B) at (2,2) {$B$};
+        \node[bn small] (C) at (1,1) {$C$};
+        \node[bn small] (D) at (1,0) {$D$};
+        \draw[skel] (A) -- (C);
+        \draw[skel] (B) -- (C);
+        \draw[skel] (C) -- (D);
+        \draw[removed] (A) to[bend right=25] (D);
+        \draw[removed] (B) to[bend left=25] (D);
+      \end{tikzpicture}\\[0.25cm]
+      {\small $A\perp D\mid C$, \ $B\perp D\mid C$\\
+      $S(A,D)=S(B,D)=\{C\}$}
+    \end{column}
+  \end{columns}
+  \vfill
+  {\scriptsize\color{upmgray}Líneas discontinuas: aristas eliminadas en cada
+  paso. Se guarda el conjunto separador de cada par, porque la fase 2 lo
+  usa.}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{Fase 2: orientar las flechas}
+  \framesubtitle{Primero los colisores, después reglas de propagación.}
+  \vspace{0.3cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.30\textwidth}
+      \centering\textbf{\color{upmblue}1. Colisor}\\[0.25cm]
+      \begin{tikzpicture}[x=1.1cm,y=0.9cm]
+        \node[bn small] (A) at (0,2) {$A$};
+        \node[bn small] (B) at (2,2) {$B$};
+        \node[bn small] (C) at (1,1) {$C$};
+        \node[bn small] (D) at (1,0) {$D$};
+        \draw[bn edge,upmorange] (A) -- (C);
+        \draw[bn edge,upmorange] (B) -- (C);
+        \draw[skel] (C) -- (D);
+      \end{tikzpicture}\\[0.25cm]
+      {\small $C\notin S(A,B)=\emptyset$\\
+      $\Rightarrow A\to C\leftarrow B$}
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \centering\textbf{\color{upmblue}2. Propagación (Meek)}\\[0.25cm]
+      \begin{tikzpicture}[x=1.1cm,y=0.9cm]
+        \node[bn small] (A) at (0,2) {$A$};
+        \node[bn small] (B) at (2,2) {$B$};
+        \node[bn small] (C) at (1,1) {$C$};
+        \node[bn small] (D) at (1,0) {$D$};
+        \draw[bn edge] (A) -- (C);
+        \draw[bn edge] (B) -- (C);
+        \draw[bn edge,upmorange] (C) -- (D);
+      \end{tikzpicture}\\[0.25cm]
+      {\small Sin ciclos ni colisores nuevos\\
+      $\Rightarrow C\to D$}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \begin{block}{Resultado: un CPDAG}
+        Las aristas que los datos no permiten orientar quedan sin dirección:
+        \[
+          X\to Y\to Z \quad\text{y}\quad X\leftarrow Y\leftarrow Z
+        \]
+        implican las mismas independencias.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vfill
+  {\scriptsize\color{upmgray}Intuición: si $C$ fuera intermediario o causa
+  común, habría hecho falta $C$ para separar $A$ y $B$.}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{Del oráculo a los datos}
+  \framesubtitle{Con pruebas perfectas acierta; con datos reales puede fallar.}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{exampleblock}{Oráculo ideal}
+        Pruebas perfectas: el PC es correcto y completo.
+      \end{exampleblock}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{alertblock}{Datos reales}
+        Cada prueba puede fallar y el error se propaga a las siguientes.
       \end{alertblock}
     \end{column}
-    \begin{column}{0.44\textwidth}
-      \figslot[0.95\linewidth]{Esquema del algoritmo\\o figura del informe}
+  \end{columns}
+  \vspace{0.3cm}
+  \begin{center}
+    \begin{tikzpicture}[node distance=0.25cm]
+      \node[limit] (l1) {\textbf{\color{upmorange}(i)}\\[1pt]\textbf{Alta dimensión}\\[1pt]
+        {\scriptsize muchas variables, pocos datos}};
+      \node[limit,right=of l1] (l2) {\textbf{\color{upmorange}(ii)}\\[1pt]\textbf{Orden de las variables}\\[1pt]
+        {\scriptsize el resultado cambia al reordenar}};
+      \node[limit,right=of l2] (l3) {\textbf{\color{upmorange}(iii)}\\[1pt]\textbf{Conjuntos grandes}\\[1pt]
+        {\scriptsize pruebas poco fiables al condicionar mucho}};
+      \node[limit,right=of l3] (l4) {\textbf{\color{upmorange}(iv)}\\[1pt]\textbf{Coste computacional}\\[1pt]
+        {\scriptsize miles de pruebas}};
+      \node[limit,right=of l4] (l5) {\textbf{\color{upmorange}(v)}\\[1pt]\textbf{Supuestos rígidos}\\[1pt]
+        {\scriptsize i.i.d., fidelidad, sin variables ocultas}};
+    \end{tikzpicture}
+  \end{center}
+  \vfill
+  {\scriptsize\color{upmgray}Como el algoritmo es secuencial, un error al
+  principio cambia los vecinos y, con ellos, las pruebas posteriores. Estas
+  cinco limitaciones organizan el resto de la sección.}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{(i) Alta dimensión}
+  \framesubtitle{¿Funciona el PC con más variables que observaciones?}
+  \vspace{0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.30\textwidth}
+      \centering
+      {\color{upmblue}\fontsize{40}{44}\selectfont\bfseries $p\gg n$}\\[0.3cm]
+      {\small más variables ($p$) que observaciones ($n$)}
+    \end{column}
+    \begin{column}{0.66\textwidth}
+      \begin{block}{Kalisch y Bühlmann (2007)}
+        El PC es consistente en alta dimensión si:
+        \begin{itemize}
+          \item el grafo es poco denso (pocos vecinos);
+          \item los datos son gaussianos;
+          \item el nivel de significación $\alpha$ disminuye con $n$.
+        \end{itemize}
+      \end{block}
+      \begin{alertblock}{La letra pequeña: fidelidad fuerte \textperiodcentered{} Uhler et al.\ (2013)}
+        La prueba exige que las dependencias reales no sean demasiado débiles.
+        Las distribuciones que incumplen esta condición no son casos raros:
+        pueden ser una fracción sorprendentemente grande. Por eso el PC es
+        frágil con muestras finitas.
+      \end{alertblock}
     \end{column}
   \end{columns}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}[t]{Variantes del PC}
-  \small
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabular}{@{}p{0.27\textwidth}p{0.36\textwidth}p{0.29\textwidth}@{}}
-    \toprule
-    \textbf{Variante} & \textbf{Idea clave} & \textbf{Referencia} \\
-    \midrule
-    \slot{Variante 1} & \slot{Aportación principal} & \slot{Autor, año} \\
-    \addlinespace
-    \slot{Variante 2} & \slot{Aportación principal} & \slot{Autor, año} \\
-    \addlinespace
-    \slot{Variante 3} & \slot{Aportación principal} & \slot{Autor, año} \\
-    \addlinespace
-    \slot{Variante 4} & \slot{Aportación principal} & \slot{Autor, año} \\
-    \bottomrule
-  \end{tabular}
-  \vspace{0.3cm}
-  \begin{block}{Criterio de agrupación}
-    \slot{Ordenar las variantes por la limitación que abordan.}
-  \end{block}
-\end{frame}
-
-% ---------------------------------------------------------------------------
-\begin{frame}[t]{PC-stable y dependencia del orden}
+\begin{frame}[t]{(ii) PC-stable y dependencia del orden}
+  \framesubtitle{Reordenar las columnas no debería cambiar el resultado.}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{block}{El problema}
+      \begin{alertblock}{El problema: PC original}
         \begin{itemize}
-          \item \slot{Qué se rompe}
-          \item \slot{Por qué}
+          \item Elimina una arista y actualiza los vecinos al instante.
+          \item Las pruebas siguientes dependen de lo que ya se eliminó.
+          \item Distinto orden de variables $\Rightarrow$ grafo distinto.
         \end{itemize}
-      \end{block}
+      \end{alertblock}
     \end{column}
     \begin{column}{0.49\textwidth}
-      \begin{block}{La solución}
+      \begin{block}{La solución: PC-stable \textperiodcentered{} Colombo y Maathuis (2014)}
         \begin{itemize}
-          \item \slot{Cambio en el algoritmo}
-          \item \slot{Trade-off}
+          \item Congela la lista de vecinos al inicio de cada nivel.
+          \item Todas las pruebas del nivel usan la misma lista.
+          \item Esqueleto independiente del orden.
         \end{itemize}
       \end{block}
     \end{column}
   \end{columns}
   \vspace{0.2cm}
-  \begin{exampleblock}{Para recordar}
-    \slot{Una frase de cierre de la sección.}
+  \begin{exampleblock}{Para las flechas: CPC (Ramsey et al., 2006)}
+    Orienta un colisor solo si todos los separadores coinciden; si no, lo
+    marca como ambiguo.
   \end{exampleblock}
+  \vfill
+  {\small\color{upmorange}\textbf{Precio:} más pruebas
+  $\;\longrightarrow\;$ (iv)}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{(iii) Conjuntos de condicionamiento grandes}
+  \framesubtitle{Condicionar en muchas variables deja pocos datos por celda.}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{tikzpicture}[x=0.75cm,y=0.0135cm]
+        \foreach \s/\v/\lab in {0/250/250,1/125/125,2/62.5/62,3/31.25/31,
+                                4/15.6/16,5/7.8/8,6/3.9/3.9} {
+          \fill[upmblue!75] (\s-0.32,0) rectangle (\s+0.32,\v);
+          \node[above,font=\scriptsize] at (\s,\v) {\lab};
+          \node[below,font=\scriptsize] at (\s,0) {\s};
+        }
+        \fill[upmorange] (6-0.32,0) rectangle (6+0.32,3.9);
+        \draw[upmgray] (-0.6,0) -- (6.6,0);
+        \node[font=\scriptsize,text=upmgray] at (3,-28) {$|S|$};
+        \node[font=\scriptsize,text=upmgray,anchor=west] at (1.6,230)
+          {datos por celda};
+        \node[font=\scriptsize,text=upmgray,anchor=west] at (1.6,205)
+          {($n=1000$, binarias)};
+      \end{tikzpicture}\\[0.1cm]
+      {\small Con $|S|=6$ ya hay 256 celdas: menos de 4 datos en cada una.}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{block}{Abellán et al.\ (2006)}
+        Cortes mínimos para usar conjuntos más pequeños y una prueba bayesiana
+        (BD) en lugar de $\chi^2$.
+      \end{block}
+      \begin{block}{$k$-PC \textperiodcentered{} Kocaoglu (2023)}
+        Solo pruebas con $|S|\le k$: aprende una clase algo menos precisa,
+        pero comete menos errores.
+      \end{block}
+      {\small\color{upmgray}\itshape Aprender menos, pero aprenderlo bien.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{(iv) Coste computacional}
+  \framesubtitle{Las pruebas de un nivel de PC-stable son independientes: paralelizables.}
+  \vspace{0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.44\textwidth}
+      \centering
+      {\color{upmblue}\fontsize{22}{26}\selectfont\bfseries
+      ${>}\,24$\,h $\to$ {\color{upmorange}${<}\,6$\,h}}\\[0.2cm]
+      {\small Parallel-PC (Le et al., 2019)\\
+      DREAM5: más de 1600 variables, 8 núcleos}\\[0.4cm]
+      \begin{tikzpicture}[x=1.25cm,y=0.42cm]
+        \foreach \c in {1,...,4} {
+          \node[font=\scriptsize\bfseries,text=upmblue] at (\c,0.9) {Núcleo \c};
+          \foreach \t in {0,1,2} {
+            \node[draw=upmblue!70,fill=upmblue!8,rounded corners=2pt,
+                  font=\tiny,minimum width=1.05cm,minimum height=0.32cm]
+              at (\c,-\t) {test};
+          }
+        }
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.52\textwidth}
+      \begin{block}{Madsen et al.\ (2017)}
+        Hilos con bloques de variables y procesos MPI que se reparten los
+        datos.
+      \end{block}
+      \begin{block}{Scutari (2017) \textperiodcentered{} \texttt{bnlearn}}
+        El \emph{backtracking} empeora la estabilidad; paralelizar es mejor.
+      \end{block}
+      \begin{block}{Le et al.\ (2019)}
+        Reparte entre núcleos las pruebas de cada nivel de PC-stable, sin
+        perder la independencia del orden.
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{(v) Relajar los supuestos}
+  \framesubtitle{Llevar el PC a datos que no cumplen sus hipótesis.}
+  \vspace{0.1cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{1. Series temporales}
+        {\small\textbf{TPC} \textperiodcentered{} Biswas y Mukherjee (2024)\\
+        \textbf{PCMCI} \textperiodcentered{} Runge et al.\ (2019)}\\[0.15cm]
+        Datos que dependen del tiempo; relaciones con retardo (la lluvia de
+        ayer afecta al caudal de hoy).
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{2. Eventos extremos}
+        {\small\textbf{PCstar} \textperiodcentered{} Améndola et al.\ (2026)}\\[0.15cm]
+        Modelos de colas pesadas (riesgo financiero, crecidas) donde la
+        fidelidad a la $d$-separación falla.
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{3. Decisiones suaves}
+        {\small\textbf{DAGPA} \textperiodcentered{} Zhou et al.\ (2025)}\\[0.15cm]
+        Convierte la $d$-separación en una función continua y optimiza el
+        grafo con gradientes.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vfill
+  {\scriptsize\color{upmgray}Variables ocultas: FCI y RFCI (se tratan en la
+  sección de pruebas de independencia).}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{Evolución del algoritmo PC}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.12}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}p{0.09\textwidth}p{0.25\textwidth}p{0.34\textwidth}p{0.24\textwidth}@{}}
+    \toprule
+    \textbf{Año} & \textbf{Variante} & \textbf{Idea clave} & \textbf{Referencia} \\
+    \midrule
+    1991    & PC                   & Esqueleto + orientación              & Spirtes y Glymour \\
+    1995    & Reglas de orientación & Propagación sin ciclos               & Meek \\
+    2006    & CPC, cortes mínimos  & Fiabilidad estadística (ii, iii)     & Ramsey; Abellán \\
+    2007    & Alta dimensión       & Consistencia con $p\gg n$ (i)        & Kalisch y Bühlmann \\
+    2014    & PC-stable            & Independencia del orden (ii)         & Colombo y Maathuis \\
+    2017--19 & Paralelización      & Pruebas de un nivel en paralelo (iv) & Madsen; Scutari; Le \\
+    2023    & $k$-PC               & Conjuntos pequeños (iii)             & Kocaoglu \\
+    2024--26 & Tiempo, extremos, DAGPA & Relajar supuestos (v)            & Biswas; Améndola; Zhou \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.3cm}
+  \begin{block}{Criterio de agrupación}
+    Cada mejora responde a una limitación concreta: el PC no se ha
+    reemplazado, se ha ido parcheando problema a problema.
+  \end{block}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[t]{Resumen del algoritmo PC}
+  \framesubtitle{Tres ideas antes de pasar a las pruebas de independencia.}
+  \vspace{0.2cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{1. Interpretable}
+        El PC deduce el grafo con pruebas de independencia; devuelve un CPDAG,
+        no un único DAG.
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{alertblock}{2. Frágil}
+        Los errores estadísticos se propagan; cada variante corrige una cara
+        del problema.
+      \end{alertblock}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{exampleblock}{3. Depende de sus pruebas}
+        Cada decisión es una prueba estadística: elegirla bien es clave
+        (sección~2).
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+  \vfill
+  {\scriptsize\color{upmgray}A menudo resolver un problema genera otro, como
+  PC-stable, que hace más pruebas. Esta fragilidad motiva también los
+  métodos híbridos.}
 \end{frame}
 
 % ===========================================================================
@@ -278,6 +710,7 @@
 % ===========================================================================
 
 \begin{frame}[t]{Pruebas de IC: el motor estadístico}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.53\textwidth}
       \begin{itemize}
@@ -313,10 +746,10 @@
         \]
         La correlación parcial no la detecta.
       \end{alertblock}
-      {\scriptsize\color{upmgray}Cuatro bloques de contrastes: parcial,
-      tablas, regresión/GCM y no paramétricos (kernel y kNN).}
     \end{column}
   \end{columns}
+  {\scriptsize\color{upmgray}Fuentes: Spirtes et al. (2000); Kitson et al.
+  (2023); Shah y Peters (2020).}
 \end{frame}
 
 % ===========================================================================
@@ -328,7 +761,8 @@
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.55\textwidth}
       \begin{itemize}
-        \item Datos continuos con normalidad conjunta.
+        \item Datos continuos con normalidad conjunta
+              \srccite{Lauritzen, 1996}.
         \item $I(X,Y\mid\mathbf Z)$ equivale a que la correlación parcial
               $\rho_{XY\cdot\mathbf Z}$ se anule.
         \item Se estima la covarianza muestral $S$ de $(X,Y,\mathbf Z)$ y se
@@ -340,7 +774,8 @@
       \]
       \begin{itemize}
         \item La transformada $z$ de Fisher convierte la correlación en un
-              estadístico aproximadamente normal.
+              estadístico aproximadamente normal \srccite{Hotelling, 1953;
+              Anderson, 2003}.
       \end{itemize}
     \end{column}
     \begin{column}{0.42\textwidth}
@@ -362,6 +797,7 @@
 \end{frame}
 
 \begin{frame}[t]{Correlación parcial: ventajas y limitaciones}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \begin{block}{Ventajas}
@@ -369,9 +805,9 @@
           \item Coste bajo: invertir el bloque de covarianzas.
           \item $p$-valores analíticos, sin remuestreo.
           \item Implementación de referencia en \texttt{pcalg} y
-                \texttt{bnlearn}.
+                \texttt{bnlearn} \srccite{Kalisch et al., 2012; Scutari, 2010}.
           \item Sostiene la consistencia del PC en alta dimensión con grafos
-                dispersos.
+                dispersos \srccite{Kalisch y Bühlmann, 2007}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -379,18 +815,21 @@
       \begin{alertblock}{Limitaciones}
         \begin{itemize}
           \item Solo es válido bajo normalidad y linealidad.
-          \item Fuera de ese modelo, las versiones de rango solo aproximan.
+          \item Fuera de ese modelo, las versiones de rango solo aproximan
+                \srccite{Baba et al., 2004}.
           \item Correlación nula no implica independencia en general.
           \item En muestras pequeñas, la aproximación asintótica del
-                $p$-valor puede ser pobre.
+                $p$-valor puede ser pobre \srccite{Tsamardinos et al., 2010}.
         \end{itemize}
       \end{alertblock}
     \end{column}
   \end{columns}
   \vspace{0.2cm}
   \begin{exampleblock}{Líneas recientes}
-    WLS para varianza no constante; correlaciones de rango y cópulas para
-    no normalidad; permutaciones para calibrar en muestra pequeña.
+    WLS para varianza no constante \srccite{Günther et al., 2022};
+    correlaciones de rango y cópulas para no normalidad
+    \srccite{Harris y Drton, 2012; Cui et al., 2016}; permutaciones para
+    calibrar en muestra pequeña.
   \end{exampleblock}
 \end{frame}
 
@@ -400,11 +839,13 @@
 \subsection{Tablas de contingencia}
 
 \begin{frame}[t]{Tablas de contingencia: el contraste discreto}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.57\textwidth}
       \begin{itemize}
         \item Datos discretos o categóricos: se comparan los conteos observados
-              con los esperados bajo independencia.
+              con los esperados bajo independencia
+              \srccite{Spirtes et al., 2000; Kitson et al., 2023}.
         \item $n_{ijk}$: observaciones con $X=i$, $Y=j$ y $\mathbf Z=k$.
       \end{itemize}
       \begin{block}{Estadísticos}
@@ -425,13 +866,15 @@
           \nu=(I-1)(J-1)\prod_l K_l
         \]
         Se rechaza $H_0$ si el estadístico supera
-        $\chi^2_{\nu,1-\alpha}$.
+        $\chi^2_{\nu,1-\alpha}$ \srccite{Spirtes et al., 2000}.
       \end{block}
       \begin{exampleblock}{Lectura}
         $G^2=2n\,\hat I(X,Y\mid\mathbf Z)$: versión discreta del contraste de
-        razón de verosimilitudes, dentro de la familia de información mutua.
+        razón de verosimilitudes, dentro de la familia de información mutua
+        \srccite{Scutari, 2010}.
       \end{exampleblock}
-      {\scriptsize\color{upmgray}Ordinales: tendencia de Jonckheere--Terpstra.}
+      {\scriptsize\color{upmgray}Ordinales: tendencia de Jonckheere--Terpstra
+      \srccite{Jonckheere, 1954; Terpstra, 1952}.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -441,12 +884,13 @@
     \begin{column}{0.48\textwidth}
       \begin{block}{Ventajas}
         \begin{itemize}
-          \item Contraste canónico para datos categóricos.
+          \item Contraste canónico para datos categóricos
+                \srccite{Kitson et al., 2023}.
           \item $p$-valores analíticos.
           \item Lectura directa como divergencia entre la tabla observada y la
                 esperada.
           \item En las simulaciones originales del PC, $G^2$ acertó el grafo
-                más veces que $\chi^2$.
+                más veces que $\chi^2$ \srccite{Spirtes et al., 2000}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -457,7 +901,8 @@
                 $|\mathbf Z|$ y la cardinalidad.
           \item Con pocas observaciones por celda, la aproximación $\chi^2$
                 deja de ser fiable.
-          \item Regla práctica: $n\ge 5\times$ número de celdas.
+          \item Regla práctica: $n\ge 5\times$ número de celdas
+                \srccite{Spirtes et al., 2000}.
           \item El coste es lineal en celdas, pero las celdas son el cuello de
                 botella.
         \end{itemize}
@@ -500,11 +945,12 @@
     \begin{column}{0.44\textwidth}
       \begin{block}{Distribución nula}
         $T_n\longrightarrow\mathcal N(0,1)$ si el producto de los errores
-        cuadráticos medios de ambas regresiones es $o(n^{-1})$.
+        cuadráticos medios de ambas regresiones es $o(n^{-1})$
+        \srccite{Shah y Peters, 2020}.
       \end{block}
       \begin{exampleblock}{Caso lineal-gaussiano}
         El contraste coincide, salvo normalización, con la correlación parcial
-        de Fisher.
+        de Fisher \srccite{Shah y Peters, 2020}.
       \end{exampleblock}
       \begin{alertblock}{Idea}
         No fija la forma de la dependencia, sino la de las medias
@@ -521,7 +967,9 @@
         \begin{itemize}
           \item Flexible: lineal, GLM, bosques y kernels; admite datos mixtos.
           \item Cubre parte de la no linealidad.
-          \item WGCM pondera por la varianza; el doble ML evita el sobreajuste.
+          \item WGCM pondera por la varianza \srccite{Scheidegger et al., 2022};
+                el doble ML evita el sobreajuste \srccite{Chernozhukov et al.,
+                2018}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -539,8 +987,9 @@
     \end{column}
   \end{columns}
   \begin{exampleblock}{Líneas recientes}
-    WGCM amplía las alternativas a costa de potencia; el doble ML permite
-    regresiones flexibles y calibradas.
+    WGCM amplía las alternativas a costa de potencia
+    \srccite{Scheidegger et al., 2022}; el doble ML permite regresiones
+    flexibles y calibradas \srccite{Chernozhukov et al., 2018}.
   \end{exampleblock}
 \end{frame}
 
@@ -550,15 +999,18 @@
 \subsection{Métodos no paramétricos}
 
 \begin{frame}[t]{Kernel y vecinos: contrastes no paramétricos}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \begin{block}{Kernel: HSIC y KCI}
         \begin{itemize}
           \item HSIC: dos variables son independientes si y solo si ninguna
-                función de una covaría con ninguna función de la otra.
+                función de una covaría con ninguna función de la otra
+                \srccite{Gretton et al., 2005}.
           \item KCI elimina $\mathbf Z$ por regresión no paramétrica y aplica
-                una medida tipo HSIC a los residuos.
-          \item Nulo por Monte Carlo o aproximación gamma.
+                una medida tipo HSIC a los residuos \srccite{Zhang et al., 2011}.
+          \item Nulo por Monte Carlo o aproximación gamma
+                \srccite{Zhang et al., 2011}.
         \end{itemize}
         \[
           \mathrm{HSIC}(X,Y)=0\iff X\perp Y.
@@ -569,10 +1021,12 @@
       \begin{block}{Vecinos más cercanos}
         \begin{itemize}
           \item La información mutua condicional se estima con un estimador
-                de $k$ vecinos.
-          \item El contraste se calibra con permutaciones locales.
+                de $k$ vecinos \srccite{Runge, 2018}.
+          \item El contraste se calibra con permutaciones locales
+                \srccite{Runge, 2018}.
           \item RCIT/RCoT sustituyen los kernels por características de
-                Fourier aleatorias y pasan a coste lineal.
+                Fourier aleatorias y pasan a coste lineal
+                \srccite{Strobl et al., 2019}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -585,6 +1039,7 @@
 \end{frame}
 
 \begin{frame}[t]{Métodos no paramétricos: ventajas y limitaciones}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \begin{block}{Ventajas}
@@ -592,27 +1047,31 @@
           \item No asumen forma funcional.
           \item Captan dependencias no lineales.
           \item Con densidades no suaves, los vecinos superan en potencia a
-                los métodos de kernel.
-          \item Los de kernel mitigan la maldición de la dimensionalidad;
-                RCIT/RCoT escalan a muestras grandes.
+                los métodos de kernel \srccite{Runge, 2018}.
+          \item Los de kernel mitigan la maldición de la dimensionalidad
+                \srccite{Zhang et al., 2011}; RCIT/RCoT escalan a muestras
+                grandes \srccite{Strobl et al., 2019}.
         \end{itemize}
       \end{block}
     \end{column}
     \begin{column}{0.49\textwidth}
       \begin{alertblock}{Limitaciones}
         \begin{itemize}
-          \item KCI es $\mathcal O(n^2)$ o peor: inviable en muestras grandes.
+          \item KCI es $\mathcal O(n^2)$ o peor: inviable en muestras grandes
+                \srccite{Strobl et al., 2019}.
           \item La distribución nula analítica no está bien calibrada por
-                debajo de $\sim 1000$ muestras.
-          \item Las permutaciones mejoran la calibración a costa de potencia.
+                debajo de $\sim 1000$ muestras \srccite{Runge, 2018}.
+          \item Las permutaciones mejoran la calibración a costa de potencia
+                \srccite{Runge, 2018}.
         \end{itemize}
       \end{alertblock}
     \end{column}
   \end{columns}
-  \vspace{0.2cm}
+  \vspace{-0.1cm}
   \begin{exampleblock}{Líneas recientes}
     Contrastes \emph{distribution-free} cuyo índice se anula si y solo si hay
-    independencia; permutaciones aprendidas para estimar mejor el nulo.
+    independencia \srccite{Cai et al., 2022}; permutaciones aprendidas para
+    estimar mejor el nulo \srccite{Doran et al., 2014}.
   \end{exampleblock}
 \end{frame}
 
@@ -622,39 +1081,42 @@
 \subsection{Extensiones para causalidad}
 
 \begin{frame}[t]{De la independencia a la causalidad}
+  \small
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.47\textwidth}
       \begin{block}{El problema de encadenar contrastes}
         \begin{itemize}
           \item Ni $\alpha$ ni la potencia miden el error de la búsqueda, que
-                depende del número de contrastes y de la estructura recorrida.
+                depende del número de contrastes y de la estructura recorrida
+                \srccite{Spirtes et al., 2000}.
           \item Una eliminación errónea inhibe contrastes posteriores y
-                arrastra esqueleto y orientación.
-          \item La consistencia exige $\alpha_n\to 0$ con $n$.
+                arrastra esqueleto y orientación
+                \srccite{Colombo y Maathuis, 2014}.
+          \item La consistencia exige $\alpha_n\to 0$ con $n$
+                \srccite{Kalisch y Bühlmann, 2007}.
         \end{itemize}
       \end{block}
     \end{column}
     \begin{column}{0.50\textwidth}
       \begin{block}{Nuevos criterios de separación}
         \begin{itemize}
-          \item \textbf{$\sigma$-separación}: mecanismos no lineales y ciclos.
+          \item \textbf{$\sigma$-separación}: mecanismos no lineales y ciclos
+                \srccite{Forré y Mooij, 2018}.
           \item \textbf{$m$-separación} en MAG/PAG: variables latentes y sesgo
-                de selección (FCI).
+                de selección (FCI) \srccite{Richardson y Spirtes, 2002}.
         \end{itemize}
       \end{block}
       \begin{block}{Nuevos escenarios}
         \begin{itemize}
           \item \textbf{COmbINE}: unifica datos observacionales e
-                intervencionales parcialmente solapados.
+                intervencionales parcialmente solapados
+                \srccite{Triantafillou y Tsamardinos, 2015}.
           \item \textbf{CTBN}: contrastes para trayectorias continuas; explotan
-                la asimetría del tiempo.
+                la asimetría del tiempo \srccite{Villa y Stella, 2016}.
         \end{itemize}
       \end{block}
     \end{column}
   \end{columns}
-  \vspace{0.1cm}
-  {\scriptsize\color{upmgray}Forré \& Mooij (2018); Richardson \& Spirtes
-  (2002); Triantafillou \& Tsamardinos (2015); Villa \& Stella (2016).}
 \end{frame}
 
 \begin{frame}[t]{Extensiones causales: alcance y límites}
@@ -683,11 +1145,13 @@
       \end{alertblock}
     \end{column}
   \end{columns}
-  \vspace{0.2cm}
+  \vspace{0.1cm}
   \begin{exampleblock}{Cierre de la sección}
     Esta fragilidad estructural es la motivación central de los enfoques
     híbridos de la sección~3.
   \end{exampleblock}
+  {\scriptsize\color{upmgray}Fuentes: Forré y Mooij (2018); Richardson y
+  Spirtes (2002); Triantafillou y Tsamardinos (2015); Villa y Stella (2016).}
 \end{frame}
 
 % ===========================================================================
@@ -1382,48 +1846,90 @@
 
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Conclusiones}
-  \begin{itemize}
-    \item \slot{Conclusión 1}
-    \item \slot{Conclusión 2}
-    \item \slot{Conclusión 3}
-    \item \slot{Conclusión 4}
+  \footnotesize
+  \begin{itemize}\setlength{\itemsep}{2pt}
+    \item \textbf{No existe una estrategia universalmente superior.} El
+          rendimiento depende de la interacción entre potencia estadística,
+          coste computacional y supuestos causales.
+    \item \textbf{El PC es auditable, pero frágil.} Cada decisión es trazable;
+          en muestra finita, un error se propaga al esqueleto y a la
+          orientación. Las limitaciones se desplazan, no se eliminan.
+    \item \textbf{Las pruebas de IC acotan lo que puede aprenderse.} Ningún
+          contraste tiene potencia uniforme frente a todas las alternativas sin
+          restringir la clase nula: no hay una prueba universal.
+    \item \textbf{La independencia no basta para orientar.} Bajo Markov,
+          fidelidad y suficiencia, el PC devuelve como máximo un CPDAG; orientar
+          más exige supuestos, intervenciones o conocimiento de dominio.
+    \item \textbf{Los híbridos no garantizan una mejora.} Un falso negativo en
+          el filtro deja aristas irrecuperables; la clave está en diseñar la
+          interfaz entre restricciones y puntuaciones.
   \end{itemize}
   \vfill
-  {\scriptsize\color{upmgray}% TODO: sustituir por las conclusiones propias del informe.
-  [Esqueleto: completar con las conclusiones del informe.]}
+  \begin{exampleblock}{La pregunta relevante}
+    \centering No qué algoritmo es mejor en abstracto, sino \alert{qué supuestos
+    son defendibles} y \alert{qué errores pueden tolerarse} en cada dominio.
+  \end{exampleblock}
+  {\scriptsize\color{upmgray}Revisión narrativa: las cifras proceden de los
+  estudios originales, no de una reproducción independiente.}
 \end{frame}
 
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Líneas futuras}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{block}{Línea 1}
-        \slot{Descripción breve}
+      \begin{block}{1. Garantías en muestra finita}
+        \small Cotas, conjuntos de confianza sobre el CPDAG y calibración
+        adaptativa del nivel de significación.
       \end{block}
-      \begin{block}{Línea 2}
-        \slot{Descripción breve}
+      \begin{block}{2. Pruebas adaptativas}
+        \small Seleccionar o combinar contrastes según el dato, $n$ y
+        $|\mathbf S|$; extensión a datos mixtos y de alta dimensión.
+      \end{block}
+      \begin{block}{3. Supuestos relajados}
+        \small Variables latentes, ciclos, no estacionariedad y eventos
+        extremos, con garantías formales y datos intervencionales.
       \end{block}
     \end{column}
     \begin{column}{0.49\textwidth}
-      \begin{block}{Línea 3}
-        \slot{Descripción breve}
+      \begin{block}{4. Escalabilidad y enfoques diferenciables}
+        \small Paralelización, algoritmos \emph{anytime} y relajaciones
+        diferenciables que conserven garantías discretas.
       \end{block}
-      \begin{block}{Línea 4}
-        \slot{Descripción breve}
+      \begin{block}{5. Evaluación reproducible}
+        \small Bancos de prueba comunes que varíen topología, muestra,
+        dimensionalidad y confusión latente, midiendo calidad estructural,
+        calibración y coste.
       \end{block}
+      \begin{exampleblock}{Cierre}
+        \small Las garantías condicionan el diseño de las pruebas; relajar
+        supuestos exige nuevas formas de evaluar la identificabilidad.
+      \end{exampleblock}
     \end{column}
   \end{columns}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}[t]{Referencias}
-  \begin{itemize}
-    \item \slot{Referencia 1}
-    \item \slot{Referencia 2}
-    \item \slot{Referencia 3}
-    \item \slot{Referencia 4}
-    \item \slot{Referencia 5}
+\begin{frame}[t]{Referencias: algoritmo PC y variantes}
+  \scriptsize
+  \begin{itemize}\setlength{\itemsep}{1pt}
+    \item Spirtes, P., Glymour, C. (1991). An algorithm for fast recovery of sparse causal graphs. \emph{Social Science Computer Review}.
+    \item Meek, C. (1995). Causal inference and causal explanation with background knowledge. \emph{UAI}.
+    \item Ramsey, J., Zhang, J., Spirtes, P. (2006). Adjacency-faithfulness and conservative causal inference. \emph{UAI}.
+    \item Abellán, J., Gómez-Olmedo, M., Moral, S. (2006). Some variations on the PC algorithm. \emph{PGM}.
+    \item Kalisch, M., Bühlmann, P. (2007). Estimating high-dimensional DAGs with the PC-algorithm. \emph{JMLR}.
+    \item Uhler, C., Raskutti, G., Bühlmann, P., Yu, B. (2013). Geometry of the faithfulness assumption. \emph{Annals of Statistics}.
+    \item Colombo, D., Maathuis, M. (2014). Order-independent constraint-based causal structure learning. \emph{JMLR}.
+    \item Madsen, A.\,L. et al.\ (2017). A parallel algorithm for BN structure learning from large data sets. \emph{KBS}.
+    \item Scutari, M. (2017). BN constraint-based structure learning: parallel and optimized implementations in bnlearn. \emph{JSS}.
+    \item Le, T.\,D. et al.\ (2019). A fast PC algorithm for high dimensional causal discovery with multi-core PCs. \emph{IEEE/ACM TCBB}.
+    \item Runge, J. et al.\ (2019). Detecting and quantifying causal associations in large nonlinear time series datasets. \emph{Science Advances}.
+    \item Kocaoglu, M. (2023). Characterization and learning of causal graphs with small conditioning sets. \emph{NeurIPS}.
+    \item Biswas, R., Mukherjee, S. (2024). Consistent causal inference from time series with PC algorithm. \emph{Statistics and Computing}.
+    \item Zhou, J. et al.\ (2025). Differentiable constraint-based causal discovery. \emph{NeurIPS}.
+    \item Améndola, C., Hollering, B., Nowell, F. (2026). A PC algorithm for max-linear Bayesian networks. \emph{JCGS}.
   \end{itemize}
+  \vfill
+  {\scriptsize\color{upmgray}La bibliografía completa está en el informe.}
 \end{frame}
 
 % ---------------------------------------------------------------------------
@@ -1443,15 +1949,6 @@
 %  ANEXO
 % ===========================================================================
 \appendix
-
-\begin{frame}[t]{Anexo: material de respaldo}
-  \begin{itemize}
-    \item \slot{Tabla de variantes del PC}
-    \item \slot{Figura de decisión sobre contrastes}
-    \item \slot{Detalles que no caben en el cuerpo principal}
-  \end{itemize}
-\end{frame}
-
 % ---------------------------------------------------------------------------
 \begin{frame}[t]{Anexo: cuándo elegir cada contraste}
   \footnotesize
