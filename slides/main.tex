@@ -774,8 +774,7 @@
       \]
       \begin{itemize}
         \item La transformada $z$ de Fisher convierte la correlación en un
-              estadístico aproximadamente normal \srccite{Hotelling, 1953;
-              Anderson, 2003}.
+              estadístico aproximadamente normal \srccite{Hotelling, 1953}.
       \end{itemize}
     \end{column}
     \begin{column}{0.42\textwidth}
@@ -815,8 +814,6 @@
       \begin{alertblock}{Limitaciones}
         \begin{itemize}
           \item Solo es válido bajo normalidad y linealidad.
-          \item Fuera de ese modelo, las versiones de rango solo aproximan
-                \srccite{Baba et al., 2004}.
           \item Correlación nula no implica independencia en general.
           \item En muestras pequeñas, la aproximación asintótica del
                 $p$-valor puede ser pobre \srccite{Tsamardinos et al., 2010}.
@@ -827,8 +824,8 @@
   \vspace{0.2cm}
   \begin{exampleblock}{Líneas recientes}
     WLS para varianza no constante \srccite{Günther et al., 2022};
-    correlaciones de rango y cópulas para no normalidad
-    \srccite{Harris y Drton, 2012; Cui et al., 2016}; permutaciones para
+    correlaciones de rango para no normalidad
+    \srccite{Harris y Drton, 2012}; permutaciones para
     calibrar en muestra pequeña.
   \end{exampleblock}
 \end{frame}
@@ -873,8 +870,6 @@
         razón de verosimilitudes, dentro de la familia de información mutua
         \srccite{Scutari, 2010}.
       \end{exampleblock}
-      {\scriptsize\color{upmgray}Ordinales: tendencia de Jonckheere--Terpstra
-      \srccite{Jonckheere, 1954; Terpstra, 1952}.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -911,8 +906,7 @@
   \end{columns}
   \vspace{0.1cm}
   \begin{exampleblock}{Líneas recientes}
-    Tablas suavizadas (Dash et al., 2003); SECMI (Kubkowski et al., 2021);
-    permutaciones.
+    Tablas suavizadas (Dash et al., 2003); permutaciones.
   \end{exampleblock}
 \end{frame}
 
@@ -1069,9 +1063,8 @@
   \end{columns}
   \vspace{-0.1cm}
   \begin{exampleblock}{Líneas recientes}
-    Contrastes \emph{distribution-free} cuyo índice se anula si y solo si hay
-    independencia \srccite{Cai et al., 2022}; permutaciones aprendidas para
-    estimar mejor el nulo \srccite{Doran et al., 2014}.
+    Permutaciones aprendidas para estimar mejor el nulo
+    \srccite{Doran et al., 2014}.
   \end{exampleblock}
 \end{frame}
 
@@ -1111,8 +1104,6 @@
           \item \textbf{COmbINE}: unifica datos observacionales e
                 intervencionales parcialmente solapados
                 \srccite{Triantafillou y Tsamardinos, 2015}.
-          \item \textbf{CTBN}: contrastes para trayectorias continuas; explotan
-                la asimetría del tiempo \srccite{Villa y Stella, 2016}.
         \end{itemize}
       \end{block}
     \end{column}
@@ -1126,7 +1117,7 @@
         \begin{itemize}
           \item Dotan a los contrastes de semántica causal plena.
           \item Cubren ciclos, latentes y sesgo de selección.
-          \item Integran datos heterogéneos y temporales.
+          \item Integran datos heterogéneos.
           \item FCI/RFCI y COmbINE amplían el marco sin abandonar las
                 restricciones.
         \end{itemize}
@@ -1151,7 +1142,7 @@
     híbridos de la sección~3.
   \end{exampleblock}
   {\scriptsize\color{upmgray}Fuentes: Forré y Mooij (2018); Richardson y
-  Spirtes (2002); Triantafillou y Tsamardinos (2015); Villa y Stella (2016).}
+  Spirtes (2002); Triantafillou y Tsamardinos (2015).}
 \end{frame}
 
 % ===========================================================================
@@ -1975,7 +1966,7 @@
     \addlinespace
     Tabla de contingencia
       & categóricas; conteos por celda suficientes; $|\mathbf Z|$ bajo
-      & $\chi^2/G^2$ analítico; SECMI si $|\mathbf Z|$ grande \\
+      & $\chi^2/G^2$ analítico; tabla suavizada si $|\mathbf Z|$ grande \\
     \bottomrule
   \end{tabular}
   \vspace{0.1cm}

@@ -77,15 +77,7 @@ I(X, Y\mid\mathbf{Z})\;\Longleftrightarrow\;
 
 
 Los algoritmos explotan esta equivalencia tratando cada resultado de un contraste como un hecho de $d$-separación, las independencias detectadas eliminan aristas y las dependencias restantes guían la orientación, de modo que la calidad del grafo aprendido queda acotada por la calidad de
-las decisiones estadísticas \citep{spirtes2000causation, pearl2009causality}. Los contrastes disponibles se pueden ordenar según la estructura que asumen sobre la dependencia, desde los paramétricos clásicos hasta los no paramétricos, y ninguno es universal, ya que todo contraste restringe implícitamente el tipo de dependencia que puede detectar y paga esa restricción con pérdida de potencia frente al resto de alternativas \citep{shah2020gcm}.  Introduciendo un ejemplo que se desarrollará con más detalle al presentar la correlación parcial. Para $X \sim \mathcal{N}(0,1)$ e $Y = X^2$ se cumple
-\[
-\mathbb{E}[X^3] = 0
-\quad\Longrightarrow\quad
-\mathrm{corr}(X, Y) = 0
-\qquad\text{mientras que}\qquad
-\neg I(X, Y),
-\]
-de modo que un contraste basado en la correlación parcial no detectaría esta dependencia pese a ser manifiesta.
+las decisiones estadísticas \citep{spirtes2000causation, pearl2009causality}. Los contrastes disponibles se pueden ordenar según la estructura que asumen sobre la dependencia, desde los paramétricos clásicos hasta los no paramétricos, y ninguno es universal, ya que todo contraste restringe implícitamente el tipo de dependencia que puede detectar y paga esa restricción con pérdida de potencia frente al resto de alternativas \citep{shah2020gcm}.
 
 \subsubsection{Correlación parcial}              
 Para datos continuos, el contraste clásico es la \textbf{correlación parcial}. Bajo
@@ -112,10 +104,10 @@ z(r) = \tfrac{1}{2}\ln\frac{1+r}{1-r},
 \qquad
 T = \sqrt{n-|\mathbf{Z}|-3}\, z(\hat{\rho}_{XY\cdot\mathbf{Z}}),
 \]
-de modo que se rechaza la hipótesis de independencia cuando $|T|$ supera el cuantil $z_{1-\alpha/2}$ de una normal estándar \citep{anderson2003introduction}. Su ventaja principal es el coste, ya que, con la matriz de covarianzas muestral previamente calculada, cada contraste se reduce a invertir el bloque correspondiente, con $O(|\mathbf{Z}|^3)$ operaciones, y sus p-valores son analíticos, sin remuestreo, lo que lo convierte en el contraste habitual para datos continuos en las implementaciones de referencia \citep{kalisch2012causal, scutari2010bnlearn}, y el que sostiene la consistencia del PC en alta dimensión bajo estructuras poco densas \citep{spirtes2000causation, kalisch2007estimating}. Su limitación es simétrica, pues la
-equivalencia entre correlación parcial nula e independencia condicional vale solo bajo normalidad y linealidad, y fuera de ese modelo las variantes de rango únicamente la aproximan \citep{baba2004partial}. 
+de modo que se rechaza la hipótesis de independencia cuando $|T|$ supera el cuantil $z_{1-\alpha/2}$ de una normal estándar. Su ventaja principal es el coste, ya que, con la matriz de covarianzas muestral previamente calculada, cada contraste se reduce a invertir el bloque correspondiente, con $O(|\mathbf{Z}|^3)$ operaciones, y sus p-valores son analíticos, sin remuestreo, lo que lo convierte en el contraste habitual para datos continuos en las implementaciones de referencia \citep{kalisch2012causal, scutari2010bnlearn}, y el que sostiene la consistencia del PC en alta dimensión bajo estructuras poco densas \citep{spirtes2000causation, kalisch2007estimating}. Su limitación es simétrica, pues la
+equivalencia entre correlación parcial nula e independencia condicional vale solo bajo normalidad y linealidad.
 
-Recientes líneas de investigación tratan de dotar de robustez a estos contrastes frente a violaciones parciales del modelo. Cuando la varianza del error no es constante, las versiones ponderadas (WLS) conservan la estructura del contraste y recuperan su calibración \citep{gunther2022conditional}. Cuando la distribución se aleja de la normalidad, los contrastes basados en correlaciones de rango mantienen la consistencia del PC bajo modelos no gaussianos o de cópula gaussiana, con un coste computacional apenas mayor \citep{harris2012pcalgorithmgaussian}, y admiten además su extensión a datos mixtos mediante cópulas \citep{cui2016copula}. En muestras pequeñas, los esquemas de permutación corrigen la aproximación asintótica del p-valor \citep{tsamardinos2010permutation, legendre2000comparison}.
+Recientes líneas de investigación tratan de dotar de robustez a estos contrastes frente a violaciones parciales del modelo. Cuando la varianza del error no es constante, las versiones ponderadas (WLS) conservan la estructura del contraste y recuperan su calibración \citep{gunther2022conditional}. Cuando la distribución se aleja de la normalidad, los contrastes basados en correlaciones de rango mantienen la consistencia del PC bajo modelos no gaussianos o de cópula gaussiana, con un coste computacional apenas mayor \citep{harris2012pcalgorithmgaussian}. En muestras pequeñas, los esquemas de permutación corrigen la aproximación asintótica del p-valor \citep{tsamardinos2010permutation}.
 
 
 \subsubsection{Tablas de contingencia}            %(discretos)
@@ -135,14 +127,12 @@ G^2 = 2\sum_{i,j,k} n_{ijk} \ln\frac{n_{ijk}}{E_{ijk}}.
 
 Ambos se distribuyen asintóticamente como una $\chi^2_\nu$ con
 $\nu = (I-1)(J-1)\prod_l K_l$ grados de libertad \citep{spirtes2000causation, kitson2023survey}, donde $K_l$ es el número de valores de la $l$-ésima variable de $\mathbf{Z}$, de modo que se rechaza la independencia cuando el estadístico supera el cuantil $\chi^2_{\nu,1-\alpha}$. El estadístico $G^2$ es la versión discreta del contraste de razón de verosimilitud y es proporcional a la información mutua condicional, $G^2 = 2n\, \hat{\mathrm{I}}(X,Y \mid \mathbf{Z})$, por lo que los
-contrastes de información mutua (MI) que usan por defecto las implementaciones de referencia pertenecen a esta misma familia \citep{scutari2010bnlearn}. Para variables ordinales, donde el orden de las categorías es informativo, se incorpora además el contraste de tendencia de
-Jonckheere--Terpstra en su versión asintótica con corrección por empates, que explota ese orden en lugar de tratar los valores como meras
-etiquetas \citep{jonckheere1954distribution, terpstra1952asymptotic}.
+contrastes de información mutua (MI) que usan por defecto las implementaciones de referencia pertenecen a esta misma familia \citep{scutari2010bnlearn}.
 
 Su ventaja es ser el contraste canónico para datos categóricos, con p-valores analíticos y una lectura directa como divergencia entre la tabla observada y la que se esperaría bajo independencia. Cabe destacar que en las simulaciones originales del PC, $G^2$ condujo al grafo correcto con más frecuencia que $\chi^2$ \citep{spirtes2000causation}. Una de las principales limitaciones es el crecimiento exponencial del número de celdas  con respecto a $|\mathbf{Z}|$ y a la cardinalidad de las variables, $I \cdot J \cdot \prod_l K_l$ celdas. Esto hace que los conteos esperados se estimen con pocas observaciones por celda y la aproximación
 $\chi^2$ deje de ser fiable. Las reglas prácticas exigen un tamaño muestral de al menos cinco veces el número de celdas para estimar con garantías, o asumir dependencia cuando $n < 10\times$ el número de celdas \citep{spirtes2000causation}. El coste de calcular el estadístico es lineal en el número de celdas, pero ese número es justamente el cuello de botella.
 
-Las líneas recientes atacan precisamente esta escasez de datos. \citet{dash2003robust} propuso una tabla de contingencia suavizada, compatible con cualquier estadístico de tabla, que incorpora \emph{priors} y puede calcularse incluso con bases de datos incompletas, y mostró que mejora la recuperación estructural y reduce la divergencia de KL frente al contraste estándar, incluso con \emph{priors} no informativos y sobre todo con muestras pequeñas o muchas variables. \citet{kubkowski2021gain} propusieron el estadístico SECMI, una expansión truncada de la información mutua condicional que mantiene la potencia del contraste cuando $|\mathbf{Z}|$ es grande sin perder el control del error de tipo I. Y en la práctica, la calibración asintótica puede sustituirse por permutaciones o por esquemas semiparamétricos que corrigen el comportamiento en muestra pequeña, tal y como ofrecen las implementaciones de referencia \citep{scutari2010bnlearn, tsamardinos2010permutation}.
+Las líneas recientes atacan precisamente esta escasez de datos. \citet{dash2003robust} propuso una tabla de contingencia suavizada, compatible con cualquier estadístico de tabla, que incorpora \emph{priors} y puede calcularse incluso con bases de datos incompletas, y mostró que mejora la recuperación estructural y reduce la divergencia de KL frente al contraste estándar, incluso con \emph{priors} no informativos y sobre todo con muestras pequeñas o muchas variables. Y en la práctica, la calibración asintótica puede sustituirse por permutaciones o por esquemas semiparamétricos que corrigen el comportamiento en muestra pequeña, tal y como ofrecen las implementaciones de referencia \citep{scutari2010bnlearn, tsamardinos2010permutation}.
 
 \subsubsection{Regresión y métodos de residuos}   %(mixtos;GLM → GCM, agnóstico)
 %P1. La idea y su formalización. Se regresan $X$ e $Y$ sobre $\mathbf{Z}$ y se contrasta la asociación de los residuos, con el caso lineal-normal que colapsa a Fisher z y enlaza con 2.2.1. Para mixtos, GLM y la razón de verosimilitudes anidada $\Lambda = 2(\hat\ell_{full} - \hat\ell_{red})$, una sola fórmula en total.
@@ -178,9 +168,7 @@ potencia solo se recupera restringiendo el problema, como hace la propia GCM al 
 \citet{scheidegger2022weighted} introdujo la medida de covarianza generalizada
 ponderada (WGCM) que pesa los residuos por la varianza condicional y amplía la clase de
 alternativas detectables. Esto obliga a ceder algo de potencia en las alternativas que GCM ya cubría bien, y cuando $X$ e $Y$ son categóricos una de sus variantes alcanza potencia frente a
-todas las alternativas, fuera ya del marco continuo de ese resultado de imposibilidad. Y en el plano de la estimación, los esquemas de validación
-cruzada del doble machine learning permiten emplear regresiones flexibles sin que su
-sobreajuste contamine la calibración del contraste \citep{chernozhukov2018double}.
+todas las alternativas, fuera ya del marco continuo de ese resultado de imposibilidad.
 
 \subsubsection{Métodos no paramétricos}           %(kernel + vecinos más cercanos)
 
@@ -200,11 +188,7 @@ pasan a coste lineal en $n$ y devuelven p-valores precisos mucho más rápido qu
 contraste original, con grafos al menos tan precisos en los algoritmos de descubrimiento
 \citep{strobl2019approximate}.
 
-La familia sigue creciendo por dos vías, la estadística y la calibración. En la estadística,
-los contrastes \emph{distribution-free} fijan la distribución nula sin depender de las
-distribuciones de los datos, y su índice, que se anula si y solo si hay independencia
-condicional, tiene potencia frente a alternativas fijas y se calcula en tiempo cuadrático
-\citep{cai2022distribution}. En la calibración, el contraste de \citet{doran2014permutation} conserva
+La familia sigue creciendo en la calibración. El contraste de \citet{doran2014permutation} conserva
 la estadística de kernel y calibra con una permutación aprendida, que transforma el problema
 en un contraste de dos muestras de kernel entre la muestra permutada y la original, gana
 una potencia competitiva y estima mejor la distribución nula a medida que crece
@@ -231,9 +215,9 @@ separación y la relajación de los escenarios en los que se aplican.
 
 La primera dirección de avance generaliza los criterios topológicos que vinculan la independencia estadística con el modelo causal subyacente. Cuando el sistema presenta mecanismos no lineales y ciclos, la $d$-separación clásica resulta teóricamente insuficiente. Para abordarlo, \citet{forre2018constraint} introdujeron los modelos causales estructurales modulares y el criterio de \emph{$\sigma$-separación}, justificando el descubrimiento causal bajo retroalimentación. Paralelamente, frente a variables latentes y sesgo de selección, el criterio de \emph{$m$-separación} sobre grafos ancestrales (MAGs y PAGs) formaliza la inferencia causal relajando el supuesto de suficiencia \citep{richardson2002ancestral}. Unificando ambos retos, \citet{mooij2020constraint} demostraron recientemente que las reglas lógicas de orientación topológica (como las del FCI) mantienen su corrección e integridad asintótica incluso en sistemas cíclicos.
 
-La segunda dirección flexibiliza los supuestos sobre el origen y la naturaleza de las observaciones. Para resolver la integración de conjuntos de datos heterogéneos, marcos como COmbINE \citep{triantafillou2015constraint} extienden los contrastes de independencia condicionando sobre variables indicadoras de contexto. Esto permite unificar experimentos observacionales e intervencionales parcialmente solapados para inferir estructuras globales inidentificables de forma aislada. En el dominio dinámico, \citet{villa2016learning} formularon pruebas de independencia condicional específicas para trayectorias continuas en Redes Bayesianas de Tiempo Continuo (CTBN), logrando orientar transiciones causales explotando matemáticamente la asimetría estricta del tiempo físico.
+La segunda dirección flexibiliza los supuestos sobre el origen de las observaciones. Para resolver la integración de conjuntos de datos heterogéneos, marcos como COmbINE \citep{triantafillou2015constraint} extienden los contrastes de independencia condicionando sobre variables indicadoras de contexto. Esto permite unificar experimentos observacionales e intervencionales parcialmente solapados para inferir estructuras globales inidentificables de forma aislada.
 
-En síntesis, estas extensiones dotan a las pruebas de independencia de semántica causal plena frente a ciclos, latentes y temporalidad. Sin embargo, la vulnerabilidad inherente al encadenamiento de contrastes locales en muestras finitas, donde un solo error estadístico altera irremediablemente los conjuntos de condicionamiento posteriores, permanece intacta. Esta fragilidad estructural para propagar errores constituye la motivación central de los enfoques híbridos explorados a continuación, que buscan reconciliar la alta expresividad causal de las restricciones topológicas con la robustez de la optimización global basada en puntuación.
+En síntesis, estas extensiones dotan a las pruebas de independencia de semántica causal plena frente a ciclos y latentes. Sin embargo, la vulnerabilidad inherente al encadenamiento de contrastes locales en muestras finitas, donde un solo error estadístico altera irremediablemente los conjuntos de condicionamiento posteriores, permanece intacta. Esta fragilidad estructural para propagar errores constituye la motivación central de los enfoques híbridos explorados a continuación, que buscan reconciliar la alta expresividad causal de las restricciones topológicas con la robustez de la optimización global basada en puntuación.
 
 \subsection{Enfoques híbridos de aprendizaje estructural y líneas futuras}
 \label{sec:hibridos}
