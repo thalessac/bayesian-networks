@@ -530,8 +530,8 @@
   \end{columns}
   \vspace{0.2cm}
   \begin{exampleblock}{Para las flechas: CPC (Ramsey et al., 2006)}
-    Orienta un colisor solo si todos los separadores coinciden; si no, lo
-    marca como ambiguo.
+    Orienta un colisor solo si el nodo central está en todos los conjuntos
+    separadores o en ninguno; si no, lo marca como ambiguo.
   \end{exampleblock}
   \vfill
   {\small\color{upmorange}\textbf{Precio:} más pruebas
@@ -620,7 +620,8 @@
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.31\textwidth}
       \begin{block}{1. Series temporales}
-        {\small\textbf{TPC} \textperiodcentered{} Biswas y Mukherjee (2024)\\
+        {\small\textbf{TPC} \textperiodcentered{} Biswas y Shlizerman (2022);
+        consistencia: Biswas y Mukherjee (2024)\\
         \textbf{PCMCI} \textperiodcentered{} Runge et al.\ (2019)}\\[0.15cm]
         Datos que dependen del tiempo; relaciones con retardo (la lluvia de
         ayer afecta al caudal de hoy).
@@ -662,7 +663,7 @@
     2014    & PC-stable            & Independencia del orden (ii)         & Colombo y Maathuis \\
     2017--19 & Paralelización      & Pruebas de un nivel en paralelo (iv) & Madsen; Scutari; Le \\
     2023    & $k$-PC               & Conjuntos pequeños (iii)             & Kocaoglu \\
-    2024--26 & Tiempo, extremos, DAGPA & Relajar supuestos (v)            & Biswas; Améndola; Zhou \\
+    2022--26 & Tiempo, extremos, DAGPA & Relajar supuestos (v)            & Biswas; Améndola; Zhou \\
     \bottomrule
   \end{tabular}
   \vspace{0.3cm}
@@ -1932,7 +1933,8 @@
     \item Le, T.\,D. et al.\ (2019). A fast PC algorithm for high dimensional causal discovery with multi-core PCs. \emph{IEEE/ACM TCBB}.
     \item Runge, J. et al.\ (2019). Detecting and quantifying causal associations in large nonlinear time series datasets. \emph{Science Advances}.
     \item Kocaoglu, M. (2023). Characterization and learning of causal graphs with small conditioning sets. \emph{NeurIPS}.
-    \item Biswas, R., Mukherjee, S. (2024). Consistent causal inference from time series with PC algorithm. \emph{Statistics and Computing}.
+    \item Biswas, R., Mukherjee, S. (2024). Consistent causal inference from time series with PC algorithm. \emph{Stat.\ Comput.}
+    \item Biswas, R., Shlizerman, E. (2022). The time-aware PC algorithm. \emph{PLoS Computational Biology}.
     \item Zhou, J. et al.\ (2025). Differentiable constraint-based causal discovery. \emph{NeurIPS}.
     \item Améndola, C., Hollering, B., Nowell, F. (2026). A PC algorithm for max-linear Bayesian networks. \emph{JCGS}.
   \end{itemize}
